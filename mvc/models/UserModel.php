@@ -24,7 +24,7 @@ class UserObject
         $this->del_flag = $row['del_flag'];
     }
 }
-class AdminModel extends BaseModel{
+class UserModel extends BaseModel{
     public $fillable = [
 		'id',
 		'name',

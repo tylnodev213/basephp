@@ -1,9 +1,10 @@
 <?php
 class App{
 
-    protected $controller="Login";
-    protected $action="product";
+    protected $controller="User";
+    protected $action="login";
     protected $params=[];
+    protected $object;
 
     function __construct(){
         
@@ -14,10 +15,12 @@ class App{
             unset($arr[0]);
         }
         require_once "./mvc/controllers/". $this->controller .".php";
+        $this->object=$this->controller;
         $this->controller = new $this->controller;
 
         // Action
         if(isset($arr[1])){
+            $arr[1]=str_replace(strchr($arr[1],"?"),"",$arr[1]);
             if( method_exists( $this->controller , $arr[1]) ){
                 $this->action = $arr[1];
             }
@@ -41,7 +44,7 @@ class App{
         return $this->action;
     }
     function getController(){
-        return $this->controller;
+        return $this->object;
     }
 }
 ?>

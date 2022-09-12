@@ -8,7 +8,11 @@ class Controller{
     }
 
     public function view($view, $data=[]){
-        require_once "./mvc/views/".$view.".php";
+        if($view=="Admin/index" && $_SERVER['REQUEST_URI'] !="/basephp/Admin/index"){
+            header("Location: ".DOMAIN."/Admin/index");
+        }else{
+            require_once "./mvc/views/".$view.".php";
+        }
     }
 }
 ?>

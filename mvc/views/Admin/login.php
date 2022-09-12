@@ -18,9 +18,7 @@ include_once("mvc/views/layouts/header.php");
         <div>
           <h2>Email</h2>
         </div>
-        <input type="text" id="email" name="email" value="<?php if (isset($data['email_input'])) {
-                                                            echo $data['email_input'];
-                                                          } ?>">
+        <input type="text" id="email" name="email" value="<?php  echo $data['email_input'] ?? "";?>">
         <div>
           <?php if (isset($data['blank_input'])) {
             if ($data['blank_input'] == "blank_email" || $data['blank_input'] == "blank") { ?>
@@ -31,9 +29,7 @@ include_once("mvc/views/layouts/header.php");
         <div>
           <h2>Password</h2>
         </div>
-        <input type="password" id="password" name="password" value="<?php if (isset($data['password_input'])) {
-                                                                      echo $data['password_input'];
-                                                                    } ?>">
+        <input type="password" id="password" name="password" value="<?php  echo $data['password_input'] ?? "";?>">
         <div>
           <?php if (isset($data['blank_input'])) {
             if ($data['blank_input'] == "blank_password" || $data['blank_input'] == "blank") { ?>

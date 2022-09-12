@@ -5,6 +5,7 @@
     --lightpink: #e6d0de;
     --lightyellow: #ffffcc;
     --lightsilver: #647687;
+    --silver: lightcyan;
 }
 *{
     margin: 0;
@@ -65,10 +66,10 @@ padding: 0px 0px 0px 30px;
 }
 .header_navbar__list__items__menu{
 display: none;
+background-color: white;
 }
 .header_navbar__list__items__menu--hover:hover {
 cursor: pointer;
-background-color: #cce5ff;
 }
 .header_navbar__list__items--menu:hover .header_navbar__list__items__menu{
 width: 85%;
@@ -78,7 +79,6 @@ text-align: center;
 z-index:999;
 left: 15%;
 cursor: pointer;
-background-color: #cce5ff;
 border-top: 1px solid black;
 }
 .header_navbar__list__items--menu{
@@ -143,9 +143,6 @@ text-align: right;
 .sort{
 position: relative;
 }
-.Admin, .User{
-background-color: #cce5ff;
-}
 .flow_url{
 width: 80%;
 margin: 50px 10%;
@@ -167,5 +164,44 @@ justify-content:space-between;
 .avatar_profile{
 width:10%;
 border: 1px solid black;
+}
+.active{
+    background-color: var(--lightblue);
+}
+.btn-del{
+    background-color: var(--lightsilver);
+    color: white;
+}
+.btn-edit{
+    background-color: var(--silver);
+    color: black;
+}
+.btn{
+    border-radius: 10px;
+    margin-left: 10px;
+}
+.table td, .table th {
+    vertical-align: middle;
+}
+.avatar_column{
+    width: 20%;
+}
+.avatar_img{
+    width: 20%;
+}
+.file_upload{
+    visibility: hidden;
+    position: relative;
+}
+.file_upload::before{
+    content: "Upload file";
+    position:absolute;
+    top: 0;
+    left: 0;
+    padding:2px 5px;
+    visibility: visible;
+    background-color: var(--silver);
+    border-radius: 5px;
+    border: 1px solid black;
 }
 </style>

@@ -1,8 +1,7 @@
 <?php
-class Base extends Controller{
-    public $controller ="User";
+class User extends Controller{
     public function logIn(){
-        $this->view($this->controller.'/login',[
+        $this->view('User/login',[
 
         ]);
     }
@@ -14,7 +13,7 @@ class Base extends Controller{
             $password_input = $_POST['password'];
             if(empty($_POST['email']) && empty($_POST['password'])){
                 $blank_input="blank";
-                $this->view($this->controller.'/login',[
+                $this->view('User/login',[
                     "result"=>$result_mess,
                     "blank_input" => $blank_input,
                 ]);
@@ -24,14 +23,14 @@ class Base extends Controller{
                 }else if(empty($_POST['password'])){
                     $blank_input="blank_password";
                 }
-                $this->view($this->controller.'/login',[
+                $this->view('User/login',[
                     "result"=>$result_mess,
                     "blank_input" => $blank_input,
                     "email_input"=>$email,
                     "password_input"=>$password_input,
                 ]);
             }   
-            $result = ($this->model($this->controller."model"))->login($email);
+            $result = ($this->model("UserModel"))->login($email);
             if($result->rowCount()>0){
                 foreach($result as $row){
                     $id = $row['id'];
@@ -40,28 +39,23 @@ class Base extends Controller{
                     $del_flag = $row['del_flag'];
                 }
                 if(strcmp($password_input,$password)==0 && $del_flag==DELETED_OFF){
-                    if($this->controller=='Admin'){
-                        setSessionAdmin('id', $id);
-                    }
-                    if($this->controller=='User'){
-                        setSessionUser('id', $id);
-                    }
+                    setSessionUser('id', $id);
                     $this->show();
                 }else{
-                    $this->view($this->controller."/login",[
+                    $this->view("User/login",[
                         "result"=>$result_mess,
                     ]);
                 }
             }else{
-                $this->view($this->controller."/login",[
+                $this->view("User/login",[
                     "result"=>$result_mess,
                 ]);
             }
         }
-        else if(checkAdminLogin() || checkUserLogin()){
+        else if(checkUserLogin()){
             $this->show();
         }else{
-            $this->view($this->controller."/login",[
+            $this->view("User/login",[
             ]);
         }
     }
@@ -73,44 +67,44 @@ class Base extends Controller{
     public function search(){
         $email = $_GET["email"] ?? "";
         $name = $_GET["name"] ?? "";
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model('UserModel');
         $arr=$model->find($email,$name);
-        $this->view($this->controller."/search",["arr" => $arr]);       
+        $this->view("User/search",["arr" => $arr]);       
     }
     public function create()
     {
         if(isset($_POST['submit'])){
-            $model=$this->model($this->controller.'Model');
+            $model=$this->model('UserModel');
             unset($_POST['password_verify'],$_POST['submit']);
             $model->create($_POST);
             $this->show();
         }else{
-            $this->view($this->controller."/create");
+            $this->view("User/create");
         }
     }
     public function edit($id){  
         if(isset($_POST['submit'])){
-            $model=$this->model($this->controller.'Model');
+            $model=$this->model('UserModel');
             unset($_POST['password_verify'],$_POST['submit']);
             $model->update($id,$_POST);
             $this->show();
         }else{
-            $model = $this->model($this->controller.'Model');
+            $model = $this->model('UserModel');
             $result=$model->findById($id);
-            $this->view($this->controller."/edit",[
+            $this->view("User/edit",[
                 "id"=>$id,
                 "arr"=>$result
             ]);
         }
     }
     public function delete($id){
-        $model=$this->model($this->controller.'Model');
+        $model=$this->model('UserModel');
         $model->deleteById($id);
         $this->show();
     }
     public function logout(){
         unset($_SESSION[$this->controller]['id']);
-        $this->view($this->controller."/login",[
+        $this->view("User/login",[
         ]);
     }
 }

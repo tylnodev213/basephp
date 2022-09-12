@@ -13,7 +13,7 @@ include("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
-            <img src="../../../public/img/avatar_default.png" class="avatar_profile"  id="preview">
+            <img src="../public/img/avatar_default.png" class="avatar_profile"  id="preview">
         </div>
         <div class="row form_input">
             <div class="col-md-2">Name*</div>

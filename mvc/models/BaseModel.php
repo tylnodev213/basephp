@@ -1,6 +1,6 @@
 <?php
 include_once ("mvc/models/Interface/QueryInterface.php");
-include_once ("mvc/helpers/const_config.php");
+include_once ("mvc/helpers/uploadFile.php");
 abstract class BaseModel extends DB implements QueryInterface
 {
 	public $tableName;
@@ -81,7 +81,8 @@ abstract class BaseModel extends DB implements QueryInterface
 	public function find($email,$name)
 	{
 		$db=DB::getInstance();
-        $result=$db->query("SELECT id FROM {$this->tableName} WHERE name like '%{$name}%' AND email like '%{$email}%' ");
+		$fields = implode(', ', $this->fillable);
+        $result=$db->query("SELECT {$fields} FROM {$this->tableName} WHERE name like '%{$name}%' AND email like '%{$email}%' ");
 		return $result;
 	}
 	public function login($email){

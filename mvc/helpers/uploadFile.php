@@ -18,7 +18,7 @@ function uploadFile()
             $folder = "../basephp/public/img/" . $new_name;
             move_uploaded_file($tempname, $folder);
             return $new_name;
-        } else {
+        } else { 
             $msg = FILE_NOT_VALID;
             echo '<script>alert(.' . $msg . '.);</script>';
         }
