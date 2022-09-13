@@ -1,11 +1,6 @@
 <?php
 class Admin extends Controller{
     public function logIn(){
-        $this->view('Admin/login',[
-
-        ]);
-    }
-    public function index(){
         $result_mess = false;
         $blank_input = "";
         if(isset($_POST['submit'])){
@@ -40,7 +35,7 @@ class Admin extends Controller{
                 }
                 if(strcmp($password_input,$password)==0 && $del_flag==DELETED_OFF){
                     setSessionAdmin('id', $id);
-                    $this->show();
+                    $this->index();
                 }else{
                     $this->view("Admin/login",[
                         "result"=>$result_mess,
@@ -53,15 +48,19 @@ class Admin extends Controller{
             }
         }
         else if(checkAdminLogin()){
-            $this->show();
+            $this->index();
         }else{
             $this->view("Admin/login",[
             ]);
         }
     }
-    public function show(){
+    public function index(){
         $model = $this->model('AdminModel');
-        $arr=$model->getAll(['id','name','email','avatar','role_type','del_flag']);
+        if(isset($_GET['field'])){
+            $arr=$model->sortByField();
+        }else{
+            $arr=$model->getAll(['id','name','email','avatar','role_type','del_flag']);
+        }
         $this->view("Admin/index",["arr" => $arr]);
     }
     public function search(){
@@ -77,7 +76,7 @@ class Admin extends Controller{
             $model=$this->model('AdminModel');
             unset($_POST['password_verify'],$_POST['submit']);
             $model->create($_POST);
-            $this->show();
+            $this->index();
         }else{
             $this->view("Admin/create");
         }
@@ -87,7 +86,7 @@ class Admin extends Controller{
             $model=$this->model('AdminModel');
             unset($_POST['password_verify'],$_POST['submit']);
             $model->update($id,$_POST);
-            $this->show();
+            $this->index();
         }else{
             $model = $this->model('AdminModel');
             $result=$model->findById($id);
@@ -100,7 +99,7 @@ class Admin extends Controller{
     public function delete($id){
         $model=$this->model('AdminModel');
         $model->deleteById($id);
-        $this->show();
+        $this->index();
     }
     public function logout(){
         unset($_SESSION[$this->controller]['id']);
@@ -108,4 +107,3 @@ class Admin extends Controller{
         ]);
     }
 }
-?>
