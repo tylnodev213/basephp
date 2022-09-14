@@ -1,113 +1,147 @@
 <?php
-include_once ('mvc/helpers/uploadFile.php');
-class UserController extends Controller {
+include_once('mvc/helpers/uploadFile.php');
+
+class UserController extends Controller
+{
 
     public $controller;
 
     public function __construct()
     {
         $this->controller = "User";
+        //check login SESSION
     }
 
-    public function logIn() {
+    public function login()
+    {
 
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
 
-        //check email blank
-
+        //validation
         $validation = validation([
-            "email"=>$email,
-            "password"=>$password
+            'email' => $email,
+            'password' => $password
         ]);
 
         //check data in db
-        if($validation) {
-            $data = $this->model($this->controller."Model")->checkLogin($email,$password);
-        }else {
-            $this->view($this->controller."/login");
+        if ($validation==1) {
+            $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
         }
 
-        if(isset($data)){
-            setSessionAdmin('id',2);
-            $this->search();
+        if (!empty($data['id'])) {
+            setSessionAdmin('id', $data['id']);
+            header("Location: ".DOMAIN."User/profile");
+            return;
         }
+        $this->view($this->controller . "/login",["email_input"=>$email,"password_input"=>$password]);
+
 
     }
 
     public function search()
     {
+        //GET condition
         $email = $_GET["email"] ?? "";
         $name = $_GET["name"] ?? "";
         $condition = [
-            'email'=>$email,
-            'name'=>$name
+            'email' => $email,
+            'name' => $name
         ];
-        $model = $this->model($this->controller."Model");
+        //Model
+        $model = $this->model($this->controller . "Model");
         $data = $model->searchData($condition);
-
-        $this->view($this->controller."/search", ["data" => $data]);
+        //View
+        $this->view($this->controller . "/search", ["data" => $data]);
     }
 
     public function create()
     {
-        $model = $this->model($this->controller."Model");
+        $model = $this->model($this->controller . "Model");
 
-        if (isset($_POST['submit'])) {
+        if (isset($_POST['save'])) {
+            //Data
             $avatar = uploadFile();
-            // get $_POST
+
             $data = [
-                'avatar'=> $avatar,
-                'name'=> $_POST['name'],
-                'email'=> $_POST['email'],
-                'password'=>$_POST['password'],
-                'role_type'=>$_POST['role_type']
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'role_type' => $_POST['role_type']
             ];
-            // create record
-            $model->create($data);
-            // return view
+            //Model
+            $actioonSuccessfull = $model->create($data);
+            //notice message action successfull
+            if ($actioonSuccessfull) {
+                setSessionActionSuccessful('Create');
+            }
+            //View
             $this->search();
         } else {
-            $this->view($this->controller."/create");
+            $this->view($this->controller . "/create");
         }
+    }
+
+    public function profile(){
+
+        $model = $this->model($this->controller . "Model");
+
+        $data = $model->findById(getSessionUser());
+
+        $this->view($this->controller."/profile",['data'=>$data]);
     }
 
     public function edit($id)
     {
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model($this->controller . 'Model');
 
-        if (isset($_POST['submit'])) {
+        if (isset($_POST['save'])) {
+            //Data
             $avatar = uploadFile();
             $data = [
-                'avatar'=> $avatar,
-                'name'=> $_POST['name'],
-                'email'=> $_POST['email'],
-                'password'=>$_POST['password'],
-                'role_type'=>$_POST['role_type']
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'role_type' => $_POST['role_type']
             ];
-            //update record
-            $model->update($id, $data);
-            //return view
+            //Model
+            $actioonSuccessfull = $model->update($id, $data);
+            //notice message action successfull
+            if ($actioonSuccessfull) {
+                setSessionActionSuccessful('Update');
+            }
+            //View
             $this->search();
         } else {
             $data = $model->findById($id);
-            $this->view($this->controller."/edit", [
-                "data" => $data
-            ]);
+            $this->view($this->controller . "/edit", ["data" => $data]);
         }
     }
 
     public function delete($id)
     {
-        $model = $this->model($this->controller.'Model');
-        $model->deleteById($id);
+        $model = $this->model($this->controller . 'Model');
+        // find del_flag
+        $data = $model->findById($id)->fetch();
+        // del_flag dirrection
+        if($data['del_flag'] == DELETED_OFF) {
+            $actioonSuccessfull = $model->update($id, ['del_flag'=>DELETED_ON]);
+        }else {
+            $actioonSuccessfull = $model->deleteById($id);
+        }
+        //notice message action successfull
+        if ($actioonSuccessfull) {
+            setSessionActionSuccessful('Delete');
+        }
         $this->search();
     }
 
     public function logout()
     {
         unset($_SESSION[$this->controller]['id']);
-        $this->view($this->controller."/login", [
+        $this->view($this->controller . "/login", [
         ]);
     }
 }

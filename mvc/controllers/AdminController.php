@@ -9,35 +9,33 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->controller = "Admin";
+        //check login SESSION
     }
 
-    public function logIn()
+    public function login()
     {
-        //checkAdminSESSION
-        if(checkAdminLogin()){
-            $this->search();
-        }
+
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
 
-        //check email blank
-
+        //validation
         $validation = validation([
-            "email" => $email,
-            "password" => $password
+            'email' => $email,
+            'password' => $password
         ]);
 
         //check data in db
-        if ($validation) {
+        if ($validation==1) {
             $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
-        } else {
-            $this->view($this->controller . "/login");
         }
 
-        if (isset($data)) {
+        if (!empty($data['id'])) {
             setSessionAdmin('id', $data['id']);
-            $this->search();
+            header("Location: ".DOMAIN."Admin/search");
+            return;
         }
+        $this->view($this->controller . "/login",["email_input"=>$email,"password_input"=>$password]);
+
 
     }
 
@@ -64,6 +62,7 @@ class AdminController extends Controller
         if (isset($_POST['save'])) {
             //Data
             $avatar = uploadFile();
+
             $data = [
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -115,11 +114,17 @@ class AdminController extends Controller
     public function delete($id)
     {
         $model = $this->model($this->controller . 'Model');
-        // delete record
-        $actioonSuccessfull = $model->deleteById($id);
+        // find del_flag
+        $data = $model->findById($id)->fetch();
+        // del_flag dirrection
+        if($data['del_flag'] == DELETED_OFF) {
+            $actioonSuccessfull = $model->update($id, ['del_flag'=>DELETED_ON]);
+        }else {
+            $actioonSuccessfull = $model->deleteById($id);
+        }
         //notice message action successfull
         if ($actioonSuccessfull) {
-            setSessionActionSuccessful('Update');
+            setSessionActionSuccessful('Delete');
         }
         $this->search();
     }
