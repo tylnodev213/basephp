@@ -15,7 +15,7 @@ include_once("mvc/views/layouts/header.php");
       <?php }
       }
       ?>
-      <form action="index" method="POST">
+      <form action="logIn" method="POST">
         <div>
           <h2>Email</h2>
         </div>

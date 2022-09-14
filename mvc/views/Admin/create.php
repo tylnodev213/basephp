@@ -1,6 +1,7 @@
 <?php
-include("mvc/views/layouts/header.php");
-include("mvc/views/layouts/navbar.php");
+include_once("mvc/helpers/resetForm.php");
+include_once("mvc/views/layouts/header.php");
+include_once("mvc/views/layouts/navbar.php");
 ?>
 <div class="flow_url">
     <p>Admin Create</p>

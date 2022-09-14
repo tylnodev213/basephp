@@ -16,7 +16,7 @@ class DB
     }
     public function select($sql)
     {
-        $connect = $this -> getInstance();
+        $connect = $this->getInstance();
         $result = $connect->query($sql);
 
         $connect=NULL;

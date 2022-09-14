@@ -1,7 +1,7 @@
 <?php
 class App{
 
-    protected $controller="User";
+    protected $controller="UserController";
     protected $action="login";
     protected $params=[];
     protected $object;
@@ -10,12 +10,12 @@ class App{
         
         $arr = $this->UrlProcess();
         // Controller
-        if( file_exists("./mvc/controllers/".$arr[0].".php") ){
-            $this->controller = $arr[0];
+        if( file_exists("./mvc/controllers/".$arr[0]."Controller.php") ){
+            $this->controller = $arr[0]."Controller";
+            $this->object=$arr[0];
             unset($arr[0]);
         }
         require_once "./mvc/controllers/". $this->controller .".php";
-        $this->object=$this->controller;
         $this->controller = new $this->controller;
 
         // Action

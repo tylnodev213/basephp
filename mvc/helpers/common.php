@@ -29,3 +29,28 @@ function checkUserLogin()
 {
 	return !empty(getSessionUser('id'));
 }
+
+function setSessionMessage($input,$message)
+{
+	$_SESSION['message'][$input] = $input ." ". $message;
+}
+
+function getSessionMessage($input)
+{
+    return $_SESSION['message'][$input];
+}
+
+function checkSessionMessage($input)
+{
+    return !empty(getSessionMessage($input));
+}
+
+function setSessionActionSuccessful($action)
+{
+    $_SESSION['actionSuccessfully'] = $action ." Successfully";
+}
+
+function getSessionActionSuccessful()
+{
+    return $_SESSION['actionSuccessfully'];
+}

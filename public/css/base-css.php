@@ -188,6 +188,7 @@ border: 1px solid black;
 }
 .avatar_img{
     width: 20%;
+    border:2px solid black;
 }
 .file_upload{
     visibility: hidden;

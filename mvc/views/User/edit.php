@@ -1,4 +1,5 @@
 <?php
+include_once("mvc/helpers/resetForm.php");
 include_once("mvc/views/layouts/header.php");
 include_once("mvc/views/layouts/navbar.php");
 ?>

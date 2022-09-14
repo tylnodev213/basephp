@@ -1,4 +1,5 @@
 <?php
+include_once("mvc/helpers/resetForm.php");
 include_once("mvc/views/layouts/header.php");
 include_once("mvc/views/layouts/navbar.php");
 ?>
@@ -6,14 +7,14 @@ include_once("mvc/views/layouts/navbar.php");
     <a href="search">Search </a><i class="arrow right"></i><a> Admin Edit</a>
 </div>
 <?php
-if (isset($data['arr'])) {
-    foreach ($data['arr'] as $each) {
+if (isset($data['data'])) {
+    while( $each = $data['data']->fetch()) {
 ?>
         <form class="form_container" action="" method="POST" enctype="multipart/form-data">
             <div class="form_box">
                 <div class="row form_input">
                     <div class="col-md-2">ID</div>
-                    <p><?php echo $data['id']; ?></p>
+                    <p><?php echo $each['id']; ?></p>
                 </div>
                 <div class="row form_input">
                     <label class="col-md-2" for="inputGroupFile" aria-describedby="inputGroupFileAddon">Avatar*</label>
@@ -56,7 +57,7 @@ if (isset($data['arr'])) {
             </div>
             <div class="row submit_box">
                 <input type="submit" value="Reset" name="submit" class="search_box__btn__items">
-                <input type="submit" value="Save" name="submit" class="search_box__btn__items search_box__btn__items--blue">
+                <input type="submit" value="Save" name="save" class="search_box__btn__items search_box__btn__items--blue">
             </div>
         </form>
 <?php
