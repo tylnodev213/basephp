@@ -7,25 +7,25 @@ abstract class BaseModel extends DB implements QueryInterface
     public $tableName;
     public $fillable;
 
-    public function create($data)
+    public function create($data): bool
     {
         // TODO: Implement create() method.
         $data = array_merge($data, [
-             'ins_id' => getSessionAdmin('id'), 
-             'ins_datetime' => date('Y-m-d H:i:s')
-            ]);
+            'ins_id' => getSessionAdmin('id'),
+            'ins_datetime' => date('Y-m-d H:i:s')
+        ]);
 
-        foreach ($data as $key => $value) 
-        {
+        $fields = [];
+        $values = [];
+        foreach ($data as $key => $value) {
             // check fillable
-            if(in_array($key,$this->fillable))
-            {
+            if (in_array($key, $this->fillable)) {
                 $fields[] = $key;
                 $values[] = $value;
             }
         }
         $fields = implode(', ', $fields);
-        
+
         // run exec insert db;
         $db = DB::getInstance();
         $req = $db->prepare("INSERT INTO {$this->tableName}({$fields}) VALUES(?,?,?,?,?,?,?);");
@@ -33,18 +33,19 @@ abstract class BaseModel extends DB implements QueryInterface
         return $req->execute($values);
     }
 
-    public function update($id, $data)
+    public function update($id, $data): bool
     {
         // TODO: Implement create() method.
         $data = array_merge($data, [
-            'upd_id' => getSessionAdmin('id'), 
+            'upd_id' => getSessionAdmin('id'),
             'upd_datetime' => date('Y-m-d H:i:s')
         ]);
 
+        $fields = [];
+        $values = [];
         foreach ($data as $key => $value) {
             // check fillable
-            if(in_array($key,$this->fillable))
-            {
+            if (in_array($key, $this->fillable)) {
                 $fields[] = $key . "=?";
                 $values[] = $value;
             }
@@ -61,29 +62,24 @@ abstract class BaseModel extends DB implements QueryInterface
 
     public function deleteById($id)
     {
-        // find del_flag
-        $data=$this->findById($id)->fetch();
-        //check del_flag
-        if($data['del_flag']==DELETED_OFF) {
-            $this->update($id, [
-                'del_flag'=>DELETED_ON,
-            ]);
-        }else {
-            $db = DB::getInstance();
-            $sql = $db->prepare("DELETE FROM {$this->tableName} WHERE id = ? AND del_flag = " . DELETED_ON);
+        $db = DB::getInstance();
 
-            return $sql->execute([$id]);
-        }
+        $sql = $db->prepare("DELETE FROM {$this->tableName} WHERE id = ? AND del_flag = " . DELETED_ON);
+
+        return $sql->execute([$id]);
     }
 
     public function findById($id)
     {
-        $fields = implode(', ', $this->fillable);
+        $fieldSellect = $this->fillable;
+        $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime', 'del_flag']);
+        $fields = implode(', ', $fieldSellect);
 
         $db = DB::getInstance();
+
         $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE id = :id AND del_flag = " . DELETED_OFF);
         $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $sql->execute(array('id'=>$id));
+        $sql->execute(array('id' => $id));
 
         return $sql;
     }
@@ -97,43 +93,40 @@ abstract class BaseModel extends DB implements QueryInterface
 
         //pagination
         $page = $_GET['page'] ?? 1;
-        $pageStart = ($page-1)*NumberRecord;
+        $pageStart = ($page - 1) * NumberRecord;
 
         //condition
-        $where['del_flag'] = " = ".DELETED_OFF;
+        $where['del_flag'] = " = " . DELETED_OFF;
 
-        if(!empty($conditions['name'])){
+        if (!empty($conditions['name'])) {
             $where['name'] = "like '%" . $conditions['name'] . "%'";
         }
-        if(!empty($conditions['email'])) {
+        if (!empty($conditions['email'])) {
             $where['email'] = "like '%" . $conditions['email'] . "%'";
         }
-        foreach ($where as $key => $value){
-            $sql[]= $key . " " .$value;
+        foreach ($where as $key => $value) {
+            $sql[] = $key . " " . $value;
         }
         $where = implode(' AND ', $sql);
         $fieldSellect = $this->fillable;
-        $fieldSellect = \array_diff($fieldSellect,['ins_id','ins_datetime','upd_id','upd_datetime','del_flag']);
+        $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime', 'del_flag']);
         $fields = implode(', ', $fieldSellect);
 
         $db = DB::getInstance();
-        $result = $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where} AND del_flag = " . DELETED_OFF ." ORDER BY {$sortField} {$sortDirection} LIMIT ". NumberRecord ." OFFSET ".$pageStart);
 
-        //print_r($result);die;
-        return $result;
+        return $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where} AND del_flag = " . DELETED_OFF . " ORDER BY {$sortField} {$sortDirection} LIMIT " . NumberRecord . " OFFSET " . $pageStart);
     }
 
-    public function checkLogin($email,$password)
+    public function checkLogin($email, $password)
     {
-        // fields selected
-        $fields = implode(', ', $this->fillable);
 
         $db = DB::getInstance();
-        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE email = :email AND password = :password AND del_flag = " . DELETED_OFF);
+
+        $sql = $db->prepare("SELECT id FROM {$this->tableName} WHERE email = :email AND password = :password AND del_flag = " . DELETED_OFF);
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $sql->execute(array(
-            'email'=>$email,
-            'password'=> $password
+            'email' => $email,
+            'password' => $password
         ));
 
         return $sql;

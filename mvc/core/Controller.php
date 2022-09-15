@@ -8,13 +8,13 @@ class Controller{
     }
 
     public function view($view, $data=[]){
-        if($view=="Admin/search" && ($_SERVER['REQUEST_URI'] !="/basephp/Admin/search") && !isset($_GET)) {
+        if($view=="Admin/search" && ($_SERVER['REQUEST_URI'] !="/basephp/Admin/search")) {
             header("Location: ".DOMAIN."Admin/search");
-            return true;
+            return;
         }
-        if($view=="User/search" && ($_SERVER['REQUEST_URI'] !="/basephp/User/search") && !isset($_GET)) {
+        if($view=="User/search" && ($_SERVER['REQUEST_URI'] !="/basephp/User/search")) {
             header("Location: " . DOMAIN . "User/search");
-            return true;
+            return;
         }
         require_once "./mvc/views/".$view.".php";
 

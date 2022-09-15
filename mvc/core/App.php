@@ -7,7 +7,7 @@ class App{
     protected $object;
 
     function __construct(){
-
+        
         $arr = $this->UrlProcess();
         // Controller
         if( file_exists("./mvc/controllers/".$arr[0]."Controller.php") ){

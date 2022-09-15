@@ -20,7 +20,7 @@ a {
   font-weight: 400;
 }
 
-h2 {
+label {
   text-align: left;
   margin: 5px;
   font-size:16px;

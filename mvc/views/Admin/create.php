@@ -40,7 +40,7 @@ include_once("mvc/views/layouts/navbar.php");
     </div>
     <div class="row submit_box">
         <input type="submit" value="reset" name="submit" class="search_box__btn__items">
-        <input type="submit" value="save" name="submit" class="search_box__btn__items search_box__btn__items--blue">
+        <input type="submit" value="save" name="save" class="search_box__btn__items search_box__btn__items--blue">
     </div>
 </form>
 <?php

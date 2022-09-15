@@ -20,14 +20,9 @@ function getSessionUser($key)
 	return $_SESSION['user'][$key];
 }
 
-function checkAdminLogin()
+function checkSessionLogin($entity): bool
 {
-	return !empty(getSessionAdmin('id'));
-}
-
-function checkUserLogin()
-{
-	return !empty(getSessionUser('id'));
+	return !empty($_SESSION[$entity]['id']);
 }
 
 function setSessionMessage($input,$message)
@@ -40,9 +35,9 @@ function getSessionMessage($input)
     return $_SESSION['message'][$input];
 }
 
-function checkSessionMessage($input)
+function checkSessionMessage($input): bool
 {
-    return !empty(getSessionMessage($input));
+    return !empty($_SESSION['message'][$input]);
 }
 
 function setSessionActionSuccessful($action)
@@ -54,3 +49,14 @@ function getSessionActionSuccessful()
 {
     return $_SESSION['actionSuccessfully'];
 }
+
+function checkSessionActionSuccessful(): bool
+{
+    return !empty($_SESSION['actionSuccessfully']);
+}
+
+function unsetSessionActionSuccessful()
+{
+    unset($_SESSION['actionSuccessfully']);
+}
+

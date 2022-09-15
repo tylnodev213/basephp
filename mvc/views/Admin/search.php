@@ -4,7 +4,7 @@ include_once("mvc/views/layouts/header.php");
 include_once("mvc/views/layouts/navbar.php");
 ?>
     <div class="notice">
-        <p><?php echo $_SESSION['actionSuccessfully'] ?? "" ?></p>
+        <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : ""; unsetSessionActionSuccessful(); ?>
     </div>
     <div class="search_box">
         <form action="" method="GET" id="myForm">

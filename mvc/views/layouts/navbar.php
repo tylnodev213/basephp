@@ -1,6 +1,7 @@
 <?php
-$controllers = (new App)->getController();
-$action = (new App)->getAction();
+$url = explode('/',$_SERVER['REQUEST_URI']);
+$controllers = $url[2];
+$action = str_replace(strchr($url[3], "?"), "", $url[3]);
 ?>
 <body>
     <div class="header_navbar">

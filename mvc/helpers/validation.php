@@ -1,44 +1,48 @@
 <?php
 
-function validateBlank($input = '')
+function validateBlank($input): int
 {
-    if ($input == "") 
+    if (strlen($input)==0)
     {
-        return false;
+        return 0;
     }
-    return true;
+    return 1;
 }
 
-function validateEmail($email = '')
+function validateEmail($email = ''): int
 {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
     {
-        return false;
+        return 0;
     }
-    return true;
+    return 1;
 }
 
-function validation($input = [])
+function validation($input = []): int
 {
+    $check = 0;
     //check email blank
-    if (!validateBlank($input['email'])) 
+    if (!validateBlank($input['email']))
     {
         setSessionMessage('Email', INPUT_BLANK);
-        return false;
+        $check++;
     }
     // check email valid
-    if (!validateEmail($input['email'])) 
+    if (!validateEmail($input['email']))
     {
         setSessionMessage('Email', EMAIL_NOT_VALID);
-        return false;
+        $check++;
     }
     //check password blank
-    if (!validateBlank($input['password'])) 
+    if (!validateBlank($input['password']))
     {
         setSessionMessage('Password', INPUT_BLANK);
-        return false;
+        $check++;
     }
-    return true;
+    if($check==0){
+        return 1;
+    }
+    return 0;
 }
 
 
