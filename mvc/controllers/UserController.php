@@ -132,7 +132,7 @@ class UserController extends Controller
 
     public function delete($id)
     {
-
+        $model = $this->model($this->controller."Model");
         // find del_flag
         $data = $model->findById($id)->fetch();
         // del_flag dirrection
