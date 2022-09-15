@@ -17,25 +17,28 @@ class AdminController extends Controller
 
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
+        if (isset($_POST['submit'])) {
+            //validation
+            $validation = validation([
+                'email' => $email,
+                'password' => $password
+            ]);
 
-        //validation
-        $validation = validation([
-            'email' => $email,
-            'password' => $password
-        ]);
+            //check data in db
+            if ($validation) {
+                $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
+            }
 
-        //check data in db
-        if ($validation==1) {
-            $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
+            if (!empty($data['id'])) {
+                setSessionAdmin('id', $data['id']);
+                header("Location: " . DOMAIN . "Admin/search");
+                return;
+            } else {
+                setSessionMessage('Login', 'Fail');
+            }
         }
 
-        if (!empty($data['id'])) {
-            setSessionAdmin('id', $data['id']);
-            header("Location: ".DOMAIN."Admin/search");
-            return;
-        }
-        $this->view($this->controller . "/login",["email_input"=>$email,"password_input"=>$password]);
-
+        $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
 
     }
 
@@ -50,9 +53,10 @@ class AdminController extends Controller
         ];
         //Model
         $model = $this->model($this->controller . "Model");
-        $data = $model->searchData($condition);
+        $data = $model->searchData($condition,"");
+        $total_record = $model->searchData($condition,"getTotalRecord");
         //View
-        $this->view($this->controller . "/search", ["data" => $data]);
+        $this->view($this->controller . "/search", ["data" => $data, "total_record"=>$total_record]);
     }
 
     public function create()
@@ -60,9 +64,24 @@ class AdminController extends Controller
         $model = $this->model($this->controller . "Model");
 
         if (isset($_POST['save'])) {
-            //Data
+            //validation
             $avatar = uploadFile();
 
+            $validation = validation($_POST);
+            $this->view($this->controller . "/create",[
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'password_verify' => $_POST['password_verify'],
+                'role_type' => $_POST['role_type']
+            ]);
+            return 0;
+            print_r($validation) ;die;
+            //Data
+            if (!$validation) {
+
+            }
             $data = [
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -78,9 +97,10 @@ class AdminController extends Controller
             }
             //View
             $this->search();
-        } else {
-            $this->view($this->controller . "/create");
+
         }
+        $this->view($this->controller . "/create");
+
     }
 
     public function edit($id)
