@@ -1,0 +1,9 @@
+{
+    "name": "basephp/mvc",
+    "description": "just a test of composer",
+    "type": "json",
+    "minimum-stability": "dev",
+    "require": {
+        "facebook/graph-sdk": "~5.0"
+    }
+}

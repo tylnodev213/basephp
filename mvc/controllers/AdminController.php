@@ -138,9 +138,10 @@ class AdminController extends Controller
             }
             //View
             header("Location: ".DOMAIN."Admin/search");
+        } else {
+            $data = $model->findById($id);
+            $this->view($this->controller . "/edit", ["data" => $data]);
         }
-        $data = $model->findById($id);
-        $this->view($this->controller . "/edit", ["data" => $data]);
     }
 
     public function delete($id)
