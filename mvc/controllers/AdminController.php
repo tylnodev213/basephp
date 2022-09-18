@@ -139,7 +139,7 @@ class AdminController extends Controller
             //View
             header("Location: ".DOMAIN."Admin/search");
         } else {
-            $data = $model->findById($id);
+            $data = $model->findById($id, 'id');
             $this->view($this->controller . "/edit", ["data" => $data]);
         }
     }
@@ -148,7 +148,7 @@ class AdminController extends Controller
     {
         $model = $this->model($this->controller . 'Model');
         // find del_flag
-        $data = $model->findById($id)->fetch();
+        $data = $model->findById($id, 'id')->fetch();
         // del_flag dirrection
         if(!empty($data) && $data['del_flag'] == DELETED_OFF) {
             $actioonSuccessfull = $model->update($id, ['del_flag'=>DELETED_ON]);
@@ -164,8 +164,9 @@ class AdminController extends Controller
 
     public function logout()
     {
-        unset($_SESSION[$this->controller]['id']);
-        $this->view($this->controller . "/login", [
+        unset($_SESSION['admin']['id']);
+        unset($_SESSION['user']['id']);
+        $this->view("User/login", [
         ]);
     }
 }

@@ -2,6 +2,7 @@
 include_once("mvc/helpers/resetForm.php");
 include_once("mvc/views/layouts/header.php");
 include_once("mvc/views/layouts/navbar.php");
+include_once("mvc/views/layouts/sort.php");
 ?>
     <div class="notice">
         <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : ""; unsetSessionActionSuccessful(); ?>
@@ -25,7 +26,7 @@ include_once("mvc/views/layouts/navbar.php");
     <div class="data">
         <div class="paginate">
             <?php
-                include ("mvc/helpers/pagination.php");
+                include("mvc/views/layouts/pagination.php");
             ?>
         </div>
         <table width="100%" border="1" cellspacing="0" class="table table-striped">
@@ -36,7 +37,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('id', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('id', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -47,7 +49,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('name', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('name', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -57,17 +60,19 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('email', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('email', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
                 <th class="text-center">
-                    <span>Status</span>
+                    <span>Role</span>
                     <span class="sort">
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('role_type', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('role_type', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>

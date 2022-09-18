@@ -9,7 +9,8 @@ include_once("mvc/views/layouts/header.php");
     <p>My Profile
     <h1>
 </div>
-<?php while ($each = $data["data"]->fetch()) { ?>
+<?php
+while ($each = $data["data"]->fetch()) { ?>
 <div class="profile_border">
     <ul class="profile_info">
         <li class="row">

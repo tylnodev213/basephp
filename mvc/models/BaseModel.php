@@ -60,7 +60,7 @@ abstract class BaseModel extends DB implements QueryInterface
         return $req->execute($values);
     }
 
-    public function deleteById($id)
+    public function deleteById($id): bool
     {
         $db = DB::getInstance();
 
@@ -69,7 +69,7 @@ abstract class BaseModel extends DB implements QueryInterface
         return $sql->execute([$id]);
     }
 
-    public function findById($id)
+    public function findById($id, $nameField): bool|PDOStatement
     {
         $fieldSellect = $this->fillable;
         $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime']);
@@ -77,14 +77,14 @@ abstract class BaseModel extends DB implements QueryInterface
 
         $db = DB::getInstance();
 
-        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE id = :id AND del_flag = " . DELETED_OFF);
+        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE {$nameField} = :id AND del_flag = " . DELETED_OFF);
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $sql->execute(array('id' => $id));
 
         return $sql;
     }
 
-    public function searchData($conditions = [], $getResult)
+    public function searchData($conditions = [], $getResult): bool|PDOStatement
     {
         //sort
         $sortField = $_GET['sortField'] ?? 'id';
@@ -119,7 +119,7 @@ abstract class BaseModel extends DB implements QueryInterface
         return $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where} AND del_flag = " . DELETED_OFF . " ORDER BY {$sortField} {$sortDirection} LIMIT " . NUMBER_RECORD_EACH_PAGE . " OFFSET " . $pageStart);
     }
 
-    public function checkLogin($email, $password)
+    public function checkLogin($email, $password): bool|PDOStatement
     {
 
         $db = DB::getInstance();

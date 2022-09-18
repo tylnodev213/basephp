@@ -4,9 +4,9 @@
   <head>
     <title><?php
         $app = new App();
-        $controller = $app->getController();
         $action = $app->getAction();
-        echo $controller."-".ucwords($action)?></title>
+        $controller = $action!='login' ? $app->getController() : "";
+        echo $controller != "" ? $controller."-".ucwords($action) : ucwords($action);?></title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

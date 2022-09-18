@@ -22,7 +22,8 @@ include_once("mvc/views/layouts/header.php");
                    style="color:red; font-size:12px"><?php echo checkSessionMessage('password') ? getSessionMessage('password') : ""; ?></p>
             </div>
             <div>
-                <?php $fb = new Facebook\Facebook([
+                <?php
+                $fb = new Facebook\Facebook([
                     'app_id' => '759351248655188', // Replace {app-id} with your app id
                     'app_secret' => '8de01d92a631b2eb340496f219a3671f',
                     'default_graph_version' => 'v2.2',
@@ -31,9 +32,10 @@ include_once("mvc/views/layouts/header.php");
                 $helper = $fb->getRedirectLoginHelper();
 
                 $permissions = ['email']; // Optional permissions
-                $loginUrl = $helper->getLoginUrl(DOMAIN.'mvc/views/User/fb_callback.php', $permissions);
+                $loginUrl = $helper->getLoginUrl(DOMAIN.'User/fb_callback', $permissions);
 
-                echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>'; ?>
+                echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>';
+                ?>
             </div>
             <div class="row">
                 <input type="submit" name="submit" value="Log In">

@@ -3,6 +3,7 @@ include_once ("mvc/models/BaseModel.php");
 class UserModel extends BaseModel{
     public $fillable = [
         'id',
+        'facebook_id',
         'name',
         'avatar',
         'email',

@@ -2,7 +2,7 @@
 
 interface QueryInterface
 {
-	function findById($id);
+	function findById($id,$nameField);
 	function deleteById($id);
 	function create($data);
 	function update($id,$data);

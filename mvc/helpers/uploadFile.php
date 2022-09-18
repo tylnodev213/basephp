@@ -3,9 +3,9 @@ function uploadFile()
 {
 
     if ($_FILES['avatar']['name'] != '') {
-
-        unlink("../basephp/helpers/img/".$_POST['old_avatar']);
-
+        if( !empty($_POST['old_avatar']) &&file_exists("../basephp/public/img/".$_POST['old_avatar']) ) {
+            unlink("../basephp/public/img/" . $_POST['old_avatar']);
+        }
         $filename = $_FILES["avatar"]["name"];
         $template = $_FILES["avatar"]["tmp_name"];
 
@@ -27,8 +27,9 @@ function uploadFile()
             setSessionMessage('Avatar', FILE_NOT_VALID. implode(', ',$allowed_type));
             return false;
         }
-    }else if(isset($_POST['old_avatar']) && strcmp($_POST['old_avatar'],AVATAR_DEFAULT)){
-        setSessionMessage('Avatar', INPUT_BLANK);
+    }
+
+    if(isset($_POST['old_avatar'])) {
         return $_POST['old_avatar'];
     }
     setSessionMessage('Avatar', INPUT_BLANK);

@@ -25,7 +25,7 @@ include_once("mvc/views/layouts/navbar.php");
     <div class="data">
         <div class="paginate">
             <?php
-            include ("mvc/helpers/pagination.php");
+            include("mvc/views/layouts/pagination.php");
             ?>
         </div>
         <table width="100%" border="1" cellspacing="0" class="table table-striped">
@@ -79,7 +79,7 @@ include_once("mvc/views/layouts/navbar.php");
                 <?php foreach ($data["data"] as $each) : ?>
                     <tr>
                         <td class="column text-center"><?php echo $each['id']; ?></td>
-                        <td class="column text-center"><img src="<?php echo "../../basephp/public/img/".$each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
+                        <td class="column text-center"><img src="<?php echo $each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
                         <td class="column"><?php echo $each['name']; ?></td>
                         <td class="column"><?php echo $each['email']; ?></td>
                         <td class="column"><?php if ($each['status'] == '1') {
