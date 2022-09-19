@@ -1,5 +1,6 @@
 <?php
-include_once('mvc/helpers/uploadFile.php');
+include_once('mvc/controllers/Interface/ActionInterface.php');
+include_once('mvc/helpers/handleFile.php');
 
 class AdminController extends Controller
 {
@@ -81,6 +82,8 @@ class AdminController extends Controller
                 ]);
                 return 0;
             }
+
+            saveFile($avatar);
             $data = [
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -123,6 +126,8 @@ class AdminController extends Controller
                 ]);
                 return 0;
             }
+
+            saveFile($avatar);
             $data = [
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -153,6 +158,7 @@ class AdminController extends Controller
         if(!empty($data) && $data['del_flag'] == DELETED_OFF) {
             $actioonSuccessfull = $model->update($id, ['del_flag'=>DELETED_ON]);
         }else {
+            removeFile($data['avatar']);
             $actioonSuccessfull = $model->deleteById($id);
         }
         //notice message action successfull
@@ -166,7 +172,7 @@ class AdminController extends Controller
     {
         unset($_SESSION['admin']['id']);
         unset($_SESSION['user']['id']);
-        $this->view("User/login", [
+        $this->view($this->controller."/login", [
         ]);
     }
 }

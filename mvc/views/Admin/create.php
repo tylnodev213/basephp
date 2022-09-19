@@ -18,7 +18,7 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
-            <img src="../public/img/<?php echo $data['avatar'] ?? "avatar_default.png" ?>" class="avatar_profile"  id="preview">
+            <img src="../public/img/<?php echo !empty($data['avatar']) ? $data['avatar'] : "avatar_default.png" ?>" class="avatar_profile"  id="preview">
             <input type="hidden" name="old_avatar" value="<?php echo $data['avatar'] ?? "" ?>">
         </div>
         <div class="row form_input">

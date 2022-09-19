@@ -11,7 +11,6 @@ abstract class BaseModel extends DB implements QueryInterface
     {
         // TODO: Implement create() method.
         $data = array_merge($data, [
-            'ins_id' => getSessionAdmin('id'),
             'ins_datetime' => date('Y-m-d H:i:s')
         ]);
 
@@ -28,7 +27,7 @@ abstract class BaseModel extends DB implements QueryInterface
 
         // run exec insert db;
         $db = DB::getInstance();
-        $req = $db->prepare("INSERT INTO {$this->tableName}({$fields}) VALUES(?,?,?,?,?,?,?);");
+        $req = $db->prepare("INSERT INTO {$this->tableName}({$fields}) VALUES(?,?,?,?,?);");
 
         return $req->execute($values);
     }
@@ -77,7 +76,7 @@ abstract class BaseModel extends DB implements QueryInterface
 
         $db = DB::getInstance();
 
-        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE {$nameField} = :id AND del_flag = " . DELETED_OFF);
+        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE {$nameField} = :id  AND del_flag=".DELETED_OFF);
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $sql->execute(array('id' => $id));
 

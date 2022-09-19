@@ -248,7 +248,8 @@
         border: 1px solid black;
     }
     .logout_btn{
-        width:100%;
+        text-align: right;
+        display:block;
         font-weight: 600;
     }
     .header_title{

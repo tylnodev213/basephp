@@ -21,7 +21,7 @@ while ($each = $data["data"]->fetch()) { ?>
             <div class="profile_info__left">Avatar</div>
             <div class="profile_info__right">
                 <img class="img_profile"
-                     src="<?php echo "../../basephp/public/img/".$each['avatar'] ?>" alt="avatar user">
+                     src="<?php echo $each['avatar'] ?>" alt="avatar user">
             </div>
         </li>
         <li class="row">

@@ -11,7 +11,7 @@ include_once("mvc/views/layouts/header.php");
             <input type="text" id="email" name="email" value="<?php echo $data['email_input'] ?? ""; ?>">
             <div>
                 <p id="validate--username" class="validate"
-                   style="color:red; font-size:12px"><?php echo checkSessionMessage('email') ? getSessionMessage('email') : ""; ?></p>
+                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Email') ? getSessionMessage('Email') : ""; unsetSessionMessage("Email"); ?></p>
             </div>
             <div>
                 <label for="password">Password</label>
@@ -19,7 +19,7 @@ include_once("mvc/views/layouts/header.php");
             <input type="password" id="password" name="password" value="<?php echo $data['password_input'] ?? ""; ?>">
             <div>
                 <p id="validate--username" class="validate"
-                   style="color:red; font-size:12px"><?php echo checkSessionMessage('password') ? getSessionMessage('password') : ""; ?></p>
+                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Password') ? getSessionMessage('Password') : (checkSessionMessage('Login') ? getSessionMessage('Login') : ""); unsetSessionMessage("Password");unsetSessionMessage("Login"); ?></p>
             </div>
             <div>
                 <?php

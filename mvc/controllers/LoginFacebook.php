@@ -15,7 +15,9 @@ class LoginFacebook extends Decorator
         ]);
 
         $helper = $fb->getRedirectLoginHelper();
-
+        if (isset($_GET['state'])) {
+            $helper->getPersistentDataHandler()->set('state', $_GET['state']);
+        }
         try {
             $accessToken = $helper->getAccessToken();
         } catch (Facebook\Exceptions\FacebookResponseException $e) {
@@ -42,18 +44,19 @@ class LoginFacebook extends Decorator
                 // setting default access token to be used in script
                 $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
             }
+            $profile_request = $fb->get('/me?fields=name,first_name,last_name,email');
+            $profile = $profile_request->getGraphUser();
+            $fbid = $profile->getProperty('id');           // To Get Facebook ID
             // redirect the user to the profile page if it has "code" GET variable
-
+            if (isset($_GET['code'])) {
+                setSessionUser('id',$fbid);
+                header('Location: profile');
+            }
             // getting basic info about user
             try {
-                $profile_request = $fb->get('/me?fields=name,first_name,last_name,email');
-                $requestPicture = $fb->get('/me/picture?redirect=false&height=200'); //getting user picture
-                $picture = $requestPicture->getGraphUser();
-                $profile = $profile_request->getGraphUser();
-                $fbid = $profile->getProperty('id');           // To Get Facebook ID
                 $fbfullname = $profile->getProperty('name');   // To Get Facebook full name
                 $fbemail = $profile->getProperty('email');    //  To Get Facebook email
-                $fbpic = $picture['url'];
+                $fbpic = 'https://graph.facebook.com/'.$fbid.'/picture?type=square';
                 return array(
                     'facebook_id'=>$fbid,
                     'name'=>$fbfullname,

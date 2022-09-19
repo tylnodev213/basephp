@@ -67,6 +67,7 @@ if (isset($data['data'])) {
                 </div>
                 <div class="row form_input">
                     <div class="col-md-2">Role*</div>
+                    <input type="hidden" name="role_type" value="">
                     <input type="radio" name="role_type" value="1 " class="col-md-1 form_input" <?php echo $each['role_type'] == 1 ? 'checked' : ""?>>
                     <label class="col-md-2 form_input">Super Admin</label>
                     <input type="radio" name="role_type" value="2" class="col-md-1 form_input" <?php echo $each['role_type'] == 2 ? 'checked' : ""?>>

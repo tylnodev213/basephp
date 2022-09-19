@@ -2,6 +2,7 @@
 include_once("mvc/helpers/resetForm.php");
 include_once("mvc/views/layouts/header.php");
 include_once("mvc/views/layouts/navbar.php");
+include_once("mvc/views/layouts/sort.php");
 ?>
     <div class="notice">
         <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : ""; unsetSessionActionSuccessful(); ?>
@@ -36,7 +37,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('id', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('id', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -47,7 +49,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('name', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('name', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -57,7 +60,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('email', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('email', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -67,7 +71,8 @@ include_once("mvc/views/layouts/navbar.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <i class="arrow up"></i><i class="arrow down"></i>
+                        <a href="<?php  sortByField('status', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php  sortByField('status', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -79,7 +84,7 @@ include_once("mvc/views/layouts/navbar.php");
                 <?php foreach ($data["data"] as $each) : ?>
                     <tr>
                         <td class="column text-center"><?php echo $each['id']; ?></td>
-                        <td class="column text-center"><img src="<?php echo $each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
+                        <td class="column text-center"><img src="<?php echo "../../basephp/public/img/".$each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
                         <td class="column"><?php echo $each['name']; ?></td>
                         <td class="column"><?php echo $each['email']; ?></td>
                         <td class="column"><?php if ($each['status'] == '1') {

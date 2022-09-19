@@ -19,7 +19,7 @@ include_once("mvc/views/layouts/header.php");
             <input type="password" id="password" name="password" value="<?php echo $data['password_input'] ?? ""; ?>">
             <div>
                 <p id="validate--username" class="validate"
-                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Password') ? getSessionMessage('Password') : (checkSessionMessage('Login') ? getSessionMessage('Login') : ""); unsetSessionMessage("Email"); ?></p>
+                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Password') ? getSessionMessage('Password') : (checkSessionMessage('Login') ? getSessionMessage('Login') : ""); unsetSessionMessage("Password"); unsetSessionMessage("Login"); ?></p>
             </div>
             <div class="row">
                 <input type="submit" name="submit" value="Log In">
