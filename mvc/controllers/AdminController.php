@@ -2,7 +2,7 @@
 include_once('mvc/controllers/Interface/ActionInterface.php');
 include_once('mvc/helpers/handleFile.php');
 
-class AdminController extends Controller
+class AdminController extends Controller implements ActionInterface
 {
 
     public $controller;
@@ -10,7 +10,6 @@ class AdminController extends Controller
     public function __construct()
     {
         $this->controller = "Admin";
-        //check login SESSION
     }
 
     public function login()
@@ -45,6 +44,11 @@ class AdminController extends Controller
 
     public function search()
     {
+
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         //GET condition
         $email = $_GET["email"] ?? "";
         $name = $_GET["name"] ?? "";
@@ -62,6 +66,10 @@ class AdminController extends Controller
 
     public function create()
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . "Model");
 
         if (isset($_POST['save'])) {
@@ -99,6 +107,7 @@ class AdminController extends Controller
             }
             //View
             header("Location: ".DOMAIN."Admin/search");
+            return 0;
 
         }
         $this->view($this->controller . "/create");
@@ -107,6 +116,10 @@ class AdminController extends Controller
 
     public function edit($id)
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . 'Model');
 
         if (isset($_POST['save'])) {
@@ -117,6 +130,7 @@ class AdminController extends Controller
 
             if (!$validation) {
                 $this->view($this->controller . "/edit",[
+                    'id' => $id,
                     'avatar' => $avatar,
                     'name' => $_POST['name'],
                     'email' => $_POST['email'],
@@ -144,13 +158,24 @@ class AdminController extends Controller
             //View
             header("Location: ".DOMAIN."Admin/search");
         } else {
-            $data = $model->findById($id, 'id');
-            $this->view($this->controller . "/edit", ["data" => $data]);
+            $data = $model->findById($id, 'id')->fetch();
+            $this->view($this->controller . "/edit", [
+                'id' => $data['id'],
+                'name' => $data['name'],
+                'avatar' => $data['avatar'],
+                'email' => $data['email'],
+                'password'=>$data['password'],
+                'role_type'=>$data['role_type']
+            ]);
         }
     }
 
     public function delete($id)
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . 'Model');
         // find del_flag
         $data = $model->findById($id, 'id')->fetch();

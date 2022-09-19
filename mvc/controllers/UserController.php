@@ -12,7 +12,6 @@ class UserController extends Controller implements ActionInterface
     public function __construct()
     {
         $this->controller = "User";
-        //check login SESSION
     }
 
     public function login()
@@ -47,6 +46,10 @@ class UserController extends Controller implements ActionInterface
 
     public function search()
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         //GET condition
         $email = $_GET["email"] ?? "";
         $name = $_GET["name"] ?? "";
@@ -64,6 +67,10 @@ class UserController extends Controller implements ActionInterface
 
     public function create()
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . "Model");
 
         $validation = validation($_POST);
@@ -83,6 +90,10 @@ class UserController extends Controller implements ActionInterface
 
     public function edit($id)
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . 'Model');
 
         if (isset($_POST['save'])) {
@@ -93,6 +104,7 @@ class UserController extends Controller implements ActionInterface
 
             if (!$validation) {
                 $this->view($this->controller . "/edit",[
+                    'id'=> $id,
                     'avatar' => $avatar,
                     'name' => $_POST['name'],
                     'email' => $_POST['email'],
@@ -120,13 +132,24 @@ class UserController extends Controller implements ActionInterface
             //View
             header("Location: ".DOMAIN.$this->controller."/search");
         } else {
-            $data = $model->findById($id, 'id');
-            $this->view($this->controller . "/edit", ["data" => $data]);
+            $data = $model->findById($id, 'id')->fetch();
+            $this->view($this->controller . "/edit", [
+                'id' => $data['id'],
+                'name' => $data['name'],
+                'avatar' => $data['avatar'],
+                'email' => $data['email'],
+                'password'=>$data['password'],
+                'status'=>$data['status']
+            ]);
         }
     }
 
     public function delete($id)
     {
+        //check login SESSION
+        if(!checkSessionLogin('admin')) {
+            header("Location: ".DOMAIN."Admin/login");
+        }
         $model = $this->model($this->controller . 'Model');
         // find del_flag
         $data = $model->findById($id, 'id')->fetch();
@@ -154,6 +177,10 @@ class UserController extends Controller implements ActionInterface
 
     public function profile()
     {
+        //check login SESSION
+        if(!checkSessionLogin('user')) {
+            header("Location: ".DOMAIN."User/login");
+        }
         $model = $this->model($this->controller."Model");
         $data = $model->findById(getSessionUser('id'), 'facebook_id');
         $this->view($this->controller . "/profile", [

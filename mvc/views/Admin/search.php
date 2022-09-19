@@ -6,6 +6,7 @@ include_once("mvc/views/layouts/sort.php");
 ?>
     <div class="notice">
         <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : ""; unsetSessionActionSuccessful(); ?>
+        <?php echo $message = checkSessionMessage('Data') ? getSessionMessage('Data') : ""; unsetSessionMessage('Data'); ?>
     </div>
     <div class="search_box">
         <form action="" method="GET" id="myForm">

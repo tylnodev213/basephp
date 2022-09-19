@@ -10,26 +10,6 @@ abstract class BaseModel extends DB implements QueryInterface
     public function create($data): bool
     {
         // TODO: Implement create() method.
-        $data = array_merge($data, [
-            'ins_datetime' => date('Y-m-d H:i:s')
-        ]);
-
-        $fields = [];
-        $values = [];
-        foreach ($data as $key => $value) {
-            // check fillable
-            if (in_array($key, $this->fillable)) {
-                $fields[] = $key;
-                $values[] = $value;
-            }
-        }
-        $fields = implode(', ', $fields);
-
-        // run exec insert db;
-        $db = DB::getInstance();
-        $req = $db->prepare("INSERT INTO {$this->tableName}({$fields}) VALUES(?,?,?,?,?);");
-
-        return $req->execute($values);
     }
 
     public function update($id, $data): bool
@@ -113,9 +93,9 @@ abstract class BaseModel extends DB implements QueryInterface
 
         $db = DB::getInstance();
         if($getResult=="getTotalRecord") {
-            return $db->query("SELECT COUNT(id) FROM {$this->tableName} WHERE {$where} AND del_flag = " . DELETED_OFF);
+            return $db->query("SELECT COUNT(id) FROM {$this->tableName} WHERE {$where} " );
         }
-        return $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where} AND del_flag = " . DELETED_OFF . " ORDER BY {$sortField} {$sortDirection} LIMIT " . NUMBER_RECORD_EACH_PAGE . " OFFSET " . $pageStart);
+        return $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where} ORDER BY {$sortField} {$sortDirection} LIMIT " . NUMBER_RECORD_EACH_PAGE . " OFFSET " . $pageStart);
     }
 
     public function checkLogin($email, $password): bool|PDOStatement

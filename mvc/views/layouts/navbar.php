@@ -15,7 +15,7 @@
                 </ul>
             </li>
             <li class="header_navbar__list__items">
-                <p class="header_navbar__list__items__menu--logout"><a href="logout">Logout</a>
+                <p class="header_navbar__list__items__menu--logout"><a href="<?php echo DOMAIN.$controller.'/logout' ?>">Logout</a>
                 <P>
             </li>
         </ul>

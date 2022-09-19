@@ -44,19 +44,19 @@ class LoginFacebook extends Decorator
                 // setting default access token to be used in script
                 $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
             }
-            $profile_request = $fb->get('/me?fields=name,first_name,last_name,email');
+            $profile_request = $fb->get('/me?fields=name,first_name,last_name,email,picture');
             $profile = $profile_request->getGraphUser();
             $fbid = $profile->getProperty('id');           // To Get Facebook ID
             // redirect the user to the profile page if it has "code" GET variable
             if (isset($_GET['code'])) {
-                setSessionUser('id',$fbid);
                 header('Location: profile');
             }
             // getting basic info about user
             try {
                 $fbfullname = $profile->getProperty('name');   // To Get Facebook full name
                 $fbemail = $profile->getProperty('email');    //  To Get Facebook email
-                $fbpic = 'https://graph.facebook.com/'.$fbid.'/picture?type=square';
+                $fbpic = $profile->getProperty('picture');
+                $fbpic = $fbpic['url'];
                 return array(
                     'facebook_id'=>$fbid,
                     'name'=>$fbfullname,

@@ -196,6 +196,8 @@
 
     .avatar_profile {
         width: 10%;
+        height: 10%;
+        overflow: hidden;
         border: 1px solid black;
     }
 
@@ -227,7 +229,9 @@
     }
 
     .avatar_img {
-        width: 20%;
+        width: 50%;
+        height: 50%;
+        overflow: hidden;
         border: 2px solid black;
     }
 
@@ -258,7 +262,6 @@
     }
     .profile_border{
         width: 80%;
-        height: 60vh;
         border: 1px solid black;
         margin: 0px 10%;
     }
@@ -266,11 +269,14 @@
         width: 100%;
         padding:30px 5%;
     }
+    .profile_info li{
+        padding: 15px 30px;
+    }
     .profile_info__left{
-        width:10%;
+        width:20%;
     }
     .profile_info__right{
-        width:90%;
+        width:80%;
     }
     .row{
         margin-left:0px;
