@@ -14,13 +14,4 @@ class DB
       }
       return self::$instance;
     }
-    public function select($sql)
-    {
-        $connect = $this->getInstance();
-        $result = $connect->query($sql);
-
-        $connect=NULL;
-
-        return $result;
-    }
 }
