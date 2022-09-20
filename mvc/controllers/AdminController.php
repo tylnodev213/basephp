@@ -1,11 +1,13 @@
 <?php
 include_once('mvc/controllers/Interface/ActionInterface.php');
 include_once('mvc/helpers/handleFile.php');
+include_once('mvc/helpers/getToken.php');
 
 class AdminController extends Controller implements ActionInterface
 {
 
     public $controller;
+    public $id;
 
     public function __construct()
     {
@@ -30,9 +32,24 @@ class AdminController extends Controller implements ActionInterface
             }
 
             if (!empty($data['id'])) {
-                setSessionAdmin('id', $data['id']);
-                header("Location: " . DOMAIN . "Admin/search");
-                return;
+                $model = $this->model('UserTokenModel');
+                $token = getToken(10);
+
+                $_SESSION['email'] = $email;
+                $_SESSION['token'] = $token;
+
+                $row_token = $model->count($email)->fetch();
+
+                if (!empty($row_token['allcount'])) {
+                    $action = $model->update($email, $token);
+                } else {
+                    $action = $model->create(array('email'=> $email, 'token'=> $token));
+                }
+                if($action) {
+                    setSessionAdmin('id', $data['id']);
+                    header("Location: " . DOMAIN . "Admin/search");
+                    return;
+                }
             } else {
                 setSessionMessage('Login', 'Fail');
             }
@@ -46,7 +63,7 @@ class AdminController extends Controller implements ActionInterface
     {
 
         //check login SESSION
-        if(!checkSessionLogin('admin')) {
+        if(!checkSessionLogin('admin') || $this->checkToken()) {
             header("Location: ".DOMAIN."Admin/login");
         }
         //GET condition
@@ -195,9 +212,27 @@ class AdminController extends Controller implements ActionInterface
 
     public function logout()
     {
-        unset($_SESSION['admin']['id']);
-        unset($_SESSION['user']['id']);
+        $this->model('UserTokenModel')->deleteById($_SESSION['email']);
         $this->view($this->controller."/login", [
         ]);
+
+        session_destroy();
     }
+
+    public function checkToken()
+    {
+        if (!isset($_SESSION['email'])) {
+            return 1;
+        }
+        $data = $this->model('UserTokenModel')->findById($_SESSION['email'], 'email')->fetch();
+        if (empty($data['token'])) {
+            return 1;
+        }
+        $token = $data['token'];
+        if ($_SESSION['token'] != $token) {
+            return 1;
+        }
+        return 0;
+    }
+
 }
