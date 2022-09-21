@@ -3,6 +3,7 @@ include_once('mvc/controllers/Interface/ActionInterface.php');
 include_once('mvc/controllers/Decorator.php');
 include_once('mvc/controllers/LoginFacebook.php');
 include_once('mvc/helpers/handleFile.php');
+include_once('mvc/helpers/passwordEncryption.php');
 include_once('vendor/facebook/graph-sdk/src/Facebook/autoload.php');
 class UserController extends Controller implements ActionInterface
 {
@@ -28,6 +29,7 @@ class UserController extends Controller implements ActionInterface
 
             //check data in db
             if ($validation) {
+                $password = passwordEncryption($password);
                 $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
             }
 
@@ -48,7 +50,7 @@ class UserController extends Controller implements ActionInterface
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         //GET condition
         $email = $_GET["email"] ?? "";
@@ -67,10 +69,6 @@ class UserController extends Controller implements ActionInterface
 
     public function create()
     {
-        //check login SESSION
-        if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
-        }
         $model = $this->model($this->controller . "Model");
 
         $validation = validation($_POST);
@@ -85,53 +83,18 @@ class UserController extends Controller implements ActionInterface
             'facebook_id' => $_POST['facebook_id']
         ];
         //Model
-        $model->create($data);
+        return $model->create($data);
     }
 
     public function edit($id)
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller . 'Model');
 
-        if (isset($_POST['save'])) {
-            //Data
-            $avatar = uploadFile();
-            //Validate
-            $validation = validation($_POST);
-
-            if (!$validation) {
-                $this->view($this->controller . "/edit",[
-                    'id'=> $id,
-                    'avatar' => $avatar,
-                    'name' => $_POST['name'],
-                    'email' => $_POST['email'],
-                    'password' => $_POST['password'],
-                    'password_verify' => $_POST['password_verify'],
-                    'status' => $_POST['status']
-                ]);
-                return 0;
-            }
-
-            saveFile($avatar);
-            $data = [
-                'avatar' => $avatar,
-                'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'password' => $_POST['password'],
-                'status' => $_POST['status']
-            ];
-            //Model
-            $actioonSuccessfull = $model->update($id, $data);
-            //notice message action successfull
-            if ($actioonSuccessfull) {
-                setSessionActionSuccessful('Update');
-            }
-            //View
-            header("Location: ".DOMAIN.$this->controller."/search");
-        } else {
+        if (!isset($_POST['save'])) {
             $data = $model->findById($id, 'id')->fetch();
             $this->view($this->controller . "/edit", [
                 'id' => $data['id'],
@@ -141,20 +104,57 @@ class UserController extends Controller implements ActionInterface
                 'password'=>$data['password'],
                 'status'=>$data['status']
             ]);
+            return;
         }
+
+        //Data
+        $avatar = uploadFile();
+        //Validate
+        $validation = validation($_POST);
+
+        if (!$validation) {
+            $this->view($this->controller . "/edit",[
+                'id'=> $id,
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'password_verify' => $_POST['password_verify'],
+                'status' => $_POST['status']
+            ]);
+            return 0;
+        }
+
+        saveFile($avatar);
+        $password = passwordEncryption($_POST['password']);
+        $data = [
+            'avatar' => $avatar,
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'password' => $password,
+            'status' => $_POST['status']
+        ];
+        //Model
+        $actioonSuccessfull = $model->update($id, $data);
+        //notice message action successfull
+        if ($actioonSuccessfull) {
+            setSessionActionSuccessful('Update');
+        }
+        //View
+        header("Location: ".DOMAIN.$this->controller."/search");
     }
 
     public function delete($id)
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller . 'Model');
         // find del_flag
         $data = $model->findById($id, 'id')->fetch();
         // del_flag dirrection
-        if(!empty($data) && $data['del_flag'] == DELETED_OFF) {
+        if(empty($data) || $data['del_flag'] != DELETED_OFF) {
             $actioonSuccessfull = $model->update($id, ['del_flag'=>DELETED_ON]);
         }else {
             removeFile($data['avatar']);
@@ -179,7 +179,7 @@ class UserController extends Controller implements ActionInterface
     {
         //check login SESSION
         if(!checkSessionLogin('user')) {
-            header("Location: ".DOMAIN."User/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller."Model");
         $data = $model->findById(getSessionUser('id'), 'facebook_id');
@@ -211,7 +211,7 @@ class UserController extends Controller implements ActionInterface
             $this->login();
             return;
         }
-
+echo 1; die;
         $data = $model->checkLogin($facebookEmail, NULL)->fetch();
         if (empty($data['id'])) {
             $this->login();

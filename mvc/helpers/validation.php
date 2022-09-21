@@ -9,6 +9,15 @@ function validateBlank($input): int
     return 1;
 }
 
+function validateLength($input, $maxLength, $minLength): int
+{
+    if ( strlen($input) > $maxLength || strlen($input) < $minLength )
+    {
+        return 0;
+    }
+    return 1;
+}
+
 function validateEmail($email = ''): int
 {
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) 
@@ -27,10 +36,36 @@ function validation($input = []): int
         setSessionMessage('Email', EMAIL_NOT_VALID);
         $check++;
     }
+
     // password verify
     if (isset($input['password_verify']) &&  strcmp($input['password'],$input['password_verify']))
     {
         setSessionMessage('Password_verify', PASSWORD_VERIFY);
+        $check++;
+    }
+
+    //validate input length
+    if(isset($input['name']) && !validateLength($input['name'],128,1) )
+    {
+        setSessionMessage('Name', INPUT_MAX_LENGTH.'128 characters');
+        $check++;
+    }
+
+    if(isset($input['email']) && !validateLength($input['email'],128,1) )
+    {
+        setSessionMessage('Email', INPUT_MAX_LENGTH.'128 characters');
+        $check++;
+    }
+
+    if(isset($input['password']) && !validateLength($input['password'],100,3) )
+    {
+        setSessionMessage('Password', INPUT_MIN_LENGTH.'3 characters and'. INPUT_MAX_LENGTH.'100 characters ');
+        $check++;
+    }
+
+    if(isset($input['password_verify']) && !validateLength($input['password_verify'],100,3) )
+    {
+        setSessionMessage('Password', INPUT_MIN_LENGTH.'3 characters and'. INPUT_MAX_LENGTH.'100 characters ');
         $check++;
     }
 

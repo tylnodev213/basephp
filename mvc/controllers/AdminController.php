@@ -1,6 +1,7 @@
 <?php
 include_once('mvc/controllers/Interface/ActionInterface.php');
 include_once('mvc/helpers/handleFile.php');
+include_once('mvc/helpers/passwordEncryption.php');
 include_once('mvc/helpers/getToken.php');
 
 class AdminController extends Controller implements ActionInterface
@@ -28,6 +29,7 @@ class AdminController extends Controller implements ActionInterface
 
             //check data in db
             if ($validation) {
+                //$password = passwordEncryption($password);
                 $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
             }
 
@@ -45,6 +47,7 @@ class AdminController extends Controller implements ActionInterface
                 } else {
                     $action = $model->create(array('email'=> $email, 'token'=> $token));
                 }
+
                 if($action) {
                     setSessionAdmin('id', $data['id']);
                     header("Location: " . DOMAIN . "Admin/search");
@@ -64,7 +67,7 @@ class AdminController extends Controller implements ActionInterface
 
         //check login SESSION
         if(!checkSessionLogin('admin') || $this->checkToken()) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         //GET condition
         $email = $_GET["email"] ?? "";
@@ -85,96 +88,60 @@ class AdminController extends Controller implements ActionInterface
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller . "Model");
 
-        if (isset($_POST['save'])) {
-            //validation
-            $avatar = uploadFile();
+        if (!isset($_POST['save'])) {
+            $this->view($this->controller . "/create");
+            return;
+        }
+        //validation
+        $avatar = uploadFile();
+        $email = $model->searchData(['email'=>$_POST['email']], 'getTotalRecord')->fetch();
+        $validation = validation($_POST);
 
-            $validation = validation($_POST);
-
-            //Data
-            if (!$validation) {
-                $this->view($this->controller . "/create",[
-                    'avatar' => $avatar,
-                    'name' => $_POST['name'],
-                    'email' => $_POST['email'],
-                    'password' => $_POST['password'],
-                    'password_verify' => $_POST['password_verify'],
-                    'role_type' => $_POST['role_type']
-                ]);
-                return 0;
-            }
-
-            saveFile($avatar);
-            $data = [
+        //Data
+        if (!$validation) {
+            $this->view($this->controller . "/create",[
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
                 'email' => $_POST['email'],
                 'password' => $_POST['password'],
+                'password_verify' => $_POST['password_verify'],
                 'role_type' => $_POST['role_type']
-            ];
-            //Model
-            $actioonSuccessfull = $model->create($data);
-            //notice message action successfull
-            if ($actioonSuccessfull) {
-                setSessionActionSuccessful('Create');
-            }
-            //View
-            header("Location: ".DOMAIN."Admin/search");
+            ]);
             return 0;
-
         }
-        $this->view($this->controller . "/create");
 
+        saveFile($avatar);
+        $password = passwordEncryption($_POST['password']);
+        $data = [
+            'avatar' => $avatar,
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'password' => $password,
+            'role_type' => $_POST['role_type']
+        ];
+        //Model
+        $actioonSuccessfull = $model->create($data);
+        //notice message action successfull
+        if ($actioonSuccessfull) {
+            setSessionActionSuccessful('Create');
+        }
+        //View
+        header("Location: ".DOMAIN."Admin/search");
     }
 
     public function edit($id)
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller . 'Model');
 
-        if (isset($_POST['save'])) {
-            //Data
-            $avatar = uploadFile();
-            //Validate
-            $validation = validation($_POST);
-
-            if (!$validation) {
-                $this->view($this->controller . "/edit",[
-                    'id' => $id,
-                    'avatar' => $avatar,
-                    'name' => $_POST['name'],
-                    'email' => $_POST['email'],
-                    'password' => $_POST['password'],
-                    'password_verify' => $_POST['password_verify'],
-                    'role_type' => $_POST['role_type']
-                ]);
-                return 0;
-            }
-
-            saveFile($avatar);
-            $data = [
-                'avatar' => $avatar,
-                'name' => $_POST['name'],
-                'email' => $_POST['email'],
-                'password' => $_POST['password'],
-                'role_type' => $_POST['role_type']
-            ];
-            //Model
-            $actioonSuccessfull = $model->update($id, $data);
-            //notice message action successfull
-            if ($actioonSuccessfull) {
-                setSessionActionSuccessful('Update');
-            }
-            //View
-            header("Location: ".DOMAIN."Admin/search");
-        } else {
+        if (!isset($_POST['save'])) {
             $data = $model->findById($id, 'id')->fetch();
             $this->view($this->controller . "/edit", [
                 'id' => $data['id'],
@@ -184,14 +151,50 @@ class AdminController extends Controller implements ActionInterface
                 'password'=>$data['password'],
                 'role_type'=>$data['role_type']
             ]);
+            return;
         }
+        //Data
+        $avatar = uploadFile();
+        //Validate
+        $validation = validation($_POST);
+
+        if (!$validation) {
+            $this->view($this->controller . "/edit",[
+                'id' => $id,
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $_POST['password'],
+                'password_verify' => $_POST['password_verify'],
+                'role_type' => $_POST['role_type']
+            ]);
+            return 0;
+        }
+
+        saveFile($avatar);
+        $password = passwordEncryption($_POST['password']);
+        $data = [
+            'avatar' => $avatar,
+            'name' => $_POST['name'],
+            'email' => $_POST['email'],
+            'password' => $password,
+            'role_type' => $_POST['role_type']
+        ];
+        //Model
+        $actioonSuccessfull = $model->update($id, $data);
+        //notice message action successfull
+        if ($actioonSuccessfull) {
+            setSessionActionSuccessful('Update');
+        }
+        //View
+        header("Location: ".DOMAIN."Admin/search");
     }
 
     public function delete($id)
     {
         //check login SESSION
         if(!checkSessionLogin('admin')) {
-            header("Location: ".DOMAIN."Admin/login");
+            header("Location: ".DOMAIN);
         }
         $model = $this->model($this->controller . 'Model');
         // find del_flag

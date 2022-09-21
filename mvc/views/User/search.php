@@ -97,7 +97,7 @@ include_once("mvc/views/layouts/sort.php");
                 <?php endforeach; ?>
             <?php } else { ?>
                 <tr>
-                    <td colspan="6" style="text-align:center">No results found!</td>
+                    <td colspan="6" style="text-align:center"><?php echo DATA_NOT_FOUND ?>></td>
                 </tr>
             <?php }
             ?>

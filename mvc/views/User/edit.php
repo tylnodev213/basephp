@@ -29,7 +29,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Name*</div>
-                <input type="text" name="name" class="col-md-4 search_box__form--input"
+                <input type="text" maxlength="128" name="name" class="col-md-4 search_box__form--input"
                        value="<?php echo $data['name'] ?>">
             </div>
             <div class="row form_input">
@@ -39,7 +39,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Email*</div>
-                <input type="text" name="email" class="col-md-4 search_box__form--input"
+                <input type="text" maxlength="128" name="email" class="col-md-4 search_box__form--input"
                        value="<?php echo $data['email'] ?>">
             </div>
             <div class="row form_input">
@@ -49,7 +49,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Password*</div>
-                <input type="text" name="password" class="col-md-4 search_box__form--input"
+                <input type="text" maxlength="100" name="password" class="col-md-4 search_box__form--input"
                        value="<?php echo $data['password'] ?>">
             </div>
             <div class="row form_input">
@@ -59,7 +59,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Password Verify*</div>
-                <input type="text" name="password_verify" class="col-md-4 search_box__form--input">
+                <input type="text" maxlength="100" name="password_verify" class="col-md-4 search_box__form--input">
             </div>
             <div class="row form_input">
                 <div class="col-md-2"></div>

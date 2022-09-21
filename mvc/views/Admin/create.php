@@ -24,7 +24,7 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2">Name*</div>
-            <input type="text" name="name" class="col-md-4 search_box__form--input" value="<?php echo $data['name'] ?? "" ?>" >
+            <input type="text" name="name" maxlength="128" class="col-md-4 search_box__form--input" value="<?php echo $data['name'] ?? "" ?>" >
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
@@ -33,7 +33,7 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2">Email*</div>
-            <input type="text" name="email" class="col-md-4 search_box__form--input" value="<?php echo $data['email'] ?? "" ?>">
+            <input type="text" name="email" maxlength="128" class="col-md-4 search_box__form--input" value="<?php echo $data['email'] ?? "" ?>">
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
@@ -42,7 +42,7 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2">Password*</div>
-            <input type="text" name="password" class="col-md-4 search_box__form--input" value="<?php echo $data['password'] ?? "" ?>">
+            <input type="text" maxlength="100" name="password" class="col-md-4 search_box__form--input" value="<?php echo $data['password'] ?? "" ?>">
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
@@ -51,7 +51,7 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
         <div class="row form_input">
             <div class="col-md-2">Password Verify*</div>
-            <input type="text" name="password_verify" class="col-md-4 search_box__form--input" value="<?php echo $data['password_verify'] ?? "" ?>">
+            <input type="text"  maxlength="100" name="password_verify" class="col-md-4 search_box__form--input" value="<?php echo $data['password_verify'] ?? "" ?>">
         </div>
         <div class="row form_input">
             <div class="col-md-2"></div>
@@ -73,8 +73,8 @@ include_once("mvc/views/layouts/navbar.php");
         </div>
     </div>
     <div class="row submit_box">
-        <input type="submit" value="reset" name="submit" class="search_box__btn__items">
-        <input type="submit" value="save" name="save" class="search_box__btn__items search_box__btn__items--blue">
+        <input type="submit" value="Reset" name="submit" class="search_box__btn__items">
+        <input type="submit" value="Save" name="save" class="search_box__btn__items search_box__btn__items--blue">
     </div>
 </form>
 <?php

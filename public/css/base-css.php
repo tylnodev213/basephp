@@ -285,4 +285,10 @@
     .img_profile{
         width: 10%;
     }
+    [aria-current="disable"] {
+        pointer-events: none;
+        cursor: default;
+        text-decoration: none;
+        color: black;
+    }
 </style>

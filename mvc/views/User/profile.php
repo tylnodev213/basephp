@@ -21,7 +21,7 @@ while ($each = $data["data"]->fetch()) { ?>
             <div class="profile_info__left">Avatar</div>
             <div class="profile_info__right">
                 <img class="img_profile"
-                     src="<?php echo $each['avatar'] ?>" alt="avatar user">
+                     src="<?php echo DOMAIN_FB_IMG.$each['avatar'] ?>" alt="avatar user">
             </div>
         </li>
         <li class="row">
