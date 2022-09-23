@@ -3,7 +3,7 @@ function uploadFile()
 {
 
     if ($_FILES['avatar']['name'] != '') {
-        if( !empty($_POST['old_avatar']) &&file_exists("../basephp/public/img/".$_POST['old_avatar']) ) {
+        if( !empty($_POST['old_avatar']) && file_exists("../basephp/public/img/".$_POST['old_avatar']) ) {
             unlink("../basephp/public/img/" . $_POST['old_avatar']);
         }
         $filename = $_FILES["avatar"]["name"];

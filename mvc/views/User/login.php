@@ -23,19 +23,19 @@ include_once("mvc/views/layouts/header.php");
             </div>
             <div>
                 <?php
-                $fb = new Facebook\Facebook([
+                $facebook = new Facebook\Facebook([
                     'app_id' => '759351248655188', // Replace {app-id} with your app id
                     'app_secret' => '8de01d92a631b2eb340496f219a3671f',
-                    'default_graph_version' => 'v2.2',
+                    'default_graph_version' => 'v15.0',
                 ]);
 
-                $helper = $fb->getRedirectLoginHelper();
+                $facebook_helper = $facebook->getRedirectLoginHelper();
 
-                $permissions = ['email']; // Optional permissions
-                $loginUrl = $helper->getLoginUrl(DOMAIN.'User/fb_callback', $permissions);
+                $facebook_permissions = ['email']; // Optional permissions
 
-                echo '<a href="' . htmlspecialchars($loginUrl) . '">Log in with Facebook!</a>';
+                $facebook_login_url = $facebook_helper->getLoginUrl(DOMAIN."User/fb_callback", $facebook_permissions);
                 ?>
+                <a href="<?php echo $facebook_login_url ?>" onclick="return confirm('Confirm login with Facebook')" >Login via Facebook</a>
             </div>
             <div class="row">
                 <input type="submit" name="submit" value="Log In">

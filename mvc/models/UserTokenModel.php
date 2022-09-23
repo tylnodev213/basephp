@@ -56,7 +56,7 @@ class UserTokenModel extends BaseModel {
         return $sql->execute(array($email));
     }
 
-    public function findById($email, $nameField): bool|PDOStatement
+    public function findByField($email, $nameField): bool|PDOStatement
     {
 
         $db = DB::getInstance();

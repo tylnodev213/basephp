@@ -7,65 +7,49 @@ class LoginFacebook extends Decorator
         parent::__construct($action);
     }
 
-    public function fb_callback()
+    /**
+     * @throws \Facebook\Exceptions\FacebookSDKException
+     */
+    public function callback()
     {
 
-        $fb = new Facebook\Facebook([
-            'app_id' => APP_ID,
-            'app_secret' => APP_SECRET,
-            'default_graph_version' => 'v2.2',
+        $facebook = new Facebook\Facebook([
+            'app_id' => '759351248655188', // Replace {app-id} with your app id
+            'app_secret' => '8de01d92a631b2eb340496f219a3671f',
+            'default_graph_version' => 'v2.2'
         ]);
 
-        $helper = $fb->getRedirectLoginHelper();
+        $facebook_helper = $facebook->getRedirectLoginHelper();
+
         if (isset($_GET['state'])) {
-            $helper->getPersistentDataHandler()->set('state', $_GET['state']);
-        }
-        try {
-            $accessToken = $helper->getAccessToken();
-        } catch (Facebook\Exceptions\FacebookResponseException $e) {
-            // When Graph returns an error
-            echo 'Graph returned an error: ' . $e->getMessage();
-            exit;
-        } catch (Facebook\Exceptions\FacebookSDKException $e) {
-            // When validation fails or other local issues
-            echo 'Facebook SDK returned an error: ' . $e->getMessage();
-            exit;
+
+            $facebook_helper->getPersistentDataHandler()->set('state', $_GET['state']);
         }
 
-        if (isset($accessToken)) {
-            if (isset($_SESSION['facebook_access_token'])) {
-                $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
-            } else {
-                // getting short-lived access token
-                $_SESSION['facebook_access_token'] = (string)$accessToken;
-                // OAuth 2.0 client handler
-                $oAuth2Client = $fb->getOAuth2Client();
-                // Exchanges a short-lived access token for a long-lived one
-                $longLivedAccessToken = $oAuth2Client->getLongLivedAccessToken($_SESSION['facebook_access_token']);
-                $_SESSION['facebook_access_token'] = (string)$longLivedAccessToken;
-                // setting default access token to be used in script
-                $fb->setDefaultAccessToken($_SESSION['facebook_access_token']);
-            }
-            $profile_request = $fb->get('/me?fields=name,email,picture');
-            $profile = $profile_request->getGraphUser();
-            $fbid = $profile->getProperty('id');           // To Get Facebook ID
-            // redirect the user to the profile page if it has "code" GET variable
-            if (isset($_GET['code'])) {
-                setSessionUser('id',$fbid);
-                header('Location: '.DOMAIN.'User/profile');
-            }
-            $fbfullname = $profile->getProperty('name');   // To Get Facebook full name
-            $fbemail = $profile->getProperty('email');    //  To Get Facebook email
-            $fbpic = $profile->getProperty('picture');
-            $fbpic = $fbpic['url'];
-            $fbpic=strchr($fbpic,"?");
-            return array(
-                'facebook_id' => $fbid,
-                'name' => $fbfullname,
-                'email' => $fbemail,
-                'avatar' => $fbpic
-            );
+        if(isset($_SESSION['facebook_access_token']))
+        {
+            $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
         }
+        else
+        {
+            $access_token = $facebook_helper->getAccessToken();
+
+            $_SESSION['facebook_access_token'] = (string)$access_token;
+
+            $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
+        }
+
+        $graph_response = $facebook->get("/me?fields=id,name,picture{url}");
+
+        $facebook_user_info = $graph_response->getGraphUser();
+
+
+        return array(
+            'name'=>$facebook_user_info['name'],
+            'email'=>$facebook_user_info['email'],
+            'avatar'=>strchr($facebook_user_info['picture']['url'],"?"),
+            'facebook_id'=>$facebook_user_info['id']
+        );
     }
 
 

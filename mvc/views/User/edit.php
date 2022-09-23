@@ -23,7 +23,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2"></div>
-                <img src="<?php echo "../../../basephp/public/img/" . $data['avatar'] ?>" class="avatar_profile"
+                <img src="<?php echo file_exists("../basephp/public/img/".$data['avatar']) ? "../../../basephp/public/img/" . $data['avatar'] : DOMAIN_FB_IMG.$data['avatar']; ?>" class="avatar_profile"
                      id="preview">
                 <input type="hidden" name="old_avatar" value="<?php echo $data['avatar'] ?>">
             </div>
@@ -49,7 +49,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Password*</div>
-                <input type="text" maxlength="100" name="password" class="col-md-4 search_box__form--input"
+                <input type="password" maxlength="100" name="password" class="col-md-4 search_box__form--input"
                        value="<?php echo $data['password'] ?>">
             </div>
             <div class="row form_input">
@@ -59,7 +59,7 @@ include_once("mvc/views/layouts/navbar.php");
             </div>
             <div class="row form_input">
                 <div class="col-md-2">Password Verify*</div>
-                <input type="text" maxlength="100" name="password_verify" class="col-md-4 search_box__form--input">
+                <input type="password" maxlength="100" name="password_verify" class="col-md-4 search_box__form--input">
             </div>
             <div class="row form_input">
                 <div class="col-md-2"></div>

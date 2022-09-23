@@ -84,7 +84,7 @@ include_once("mvc/views/layouts/sort.php");
                 <?php foreach ($data["data"] as $each) : ?>
                     <tr>
                         <td class="column text-center"><?php echo $each['id']; ?></td>
-                        <td class="column text-center"><img src="<?php echo "../../basephp/public/img/".$each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
+                        <td class="column text-center"><img src="<?php echo file_exists("../basephp/public/img/".$each['avatar']) ? "../../../basephp/public/img/" . $each['avatar'] : DOMAIN_FB_IMG.$each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
                         <td class="column"><?php echo $each['name']; ?></td>
                         <td class="column"><?php echo $each['email']; ?></td>
                         <td class="column"><?php if ($each['status'] == '1') {
@@ -97,7 +97,7 @@ include_once("mvc/views/layouts/sort.php");
                 <?php endforeach; ?>
             <?php } else { ?>
                 <tr>
-                    <td colspan="6" style="text-align:center"><?php echo DATA_NOT_FOUND ?>></td>
+                    <td colspan="6" style="text-align:center"><?php echo DATA_NOT_FOUND ?></td>
                 </tr>
             <?php }
             ?>

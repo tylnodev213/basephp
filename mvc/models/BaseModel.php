@@ -48,7 +48,7 @@ abstract class BaseModel extends DB implements QueryInterface
         return $sql->execute([$id]);
     }
 
-    public function findById($id, $nameField): bool|PDOStatement
+    public function findByField($id, $nameField): bool|PDOStatement
     {
         $fieldSellect = $this->fillable;
         $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime']);
@@ -100,10 +100,13 @@ abstract class BaseModel extends DB implements QueryInterface
 
     public function checkLogin($email, $password): bool|PDOStatement
     {
+        $fieldSellect = $this->fillable;
+        $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime']);
+        $fields = implode(', ', $fieldSellect);
 
         $db = DB::getInstance();
 
-        $sql = $db->prepare("SELECT id FROM {$this->tableName} WHERE email = :email AND password = :password AND del_flag = " . DELETED_OFF);
+        $sql = $db->prepare("SELECT {$fields}  FROM {$this->tableName} WHERE email = :email AND password = :password AND del_flag = " . DELETED_OFF);
         $sql->setFetchMode(PDO::FETCH_ASSOC);
         $sql->execute(array(
             'email' => $email,
