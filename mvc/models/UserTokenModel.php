@@ -56,17 +56,5 @@ class UserTokenModel extends BaseModel {
         return $sql->execute(array($email));
     }
 
-    public function findByField($email, $nameField): bool|PDOStatement
-    {
-
-        $db = DB::getInstance();
-
-        $sql = $db->prepare("SELECT token FROM {$this->tableName} WHERE {$nameField} = :email");
-        $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $sql->execute(array('email' => $email));
-
-        return $sql;
-    }
-
 }
 ?>

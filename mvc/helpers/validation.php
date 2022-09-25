@@ -47,30 +47,30 @@ function validation($input = []): int
     //validate input length
     if(isset($input['name']) && !validateLength($input['name'],128,1) )
     {
-        setSessionMessage('Name', INPUT_MAX_LENGTH.'128 characters');
+        setSessionMessage('Name', INPUT_MAX_LENGTH.' 128 characters');
         $check++;
     }
 
     if(isset($input['email']) && !validateLength($input['email'],128,1) )
     {
-        setSessionMessage('Email', INPUT_MAX_LENGTH.'128 characters');
+        setSessionMessage('Email', INPUT_MAX_LENGTH.' 128 characters');
         $check++;
     }
 
     if(isset($input['password']) && !validateLength($input['password'],100,3) )
     {
-        setSessionMessage('Password', INPUT_MIN_LENGTH.'3 characters and'. INPUT_MAX_LENGTH.'100 characters ');
+        setSessionMessage('Password', INPUT_MIN_LENGTH.' 3 characters and'. INPUT_MAX_LENGTH.' 100 characters ');
         $check++;
     }
 
     if(isset($input['password_verify']) && !validateLength($input['password_verify'],100,3) )
     {
-        setSessionMessage('Password', INPUT_MIN_LENGTH.'3 characters and'. INPUT_MAX_LENGTH.'100 characters ');
+        setSessionMessage('Password', INPUT_MIN_LENGTH.' 3 characters and'. INPUT_MAX_LENGTH.' 100 characters ');
         $check++;
     }
 
     //check email blank
-    if (isset($input['name']) &&  !validateBlank($input['name']))
+    if (isset($input['name']) && !validateBlank($input['name']))
     {
         setSessionMessage('Name', INPUT_BLANK);
         $check++;

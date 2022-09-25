@@ -9,3 +9,4 @@ define('INPUT_MIN_LENGTH', 'must be at least');
 define('PASSWORD_VERIFY', 'not match');
 define('NOT_SELECT', 'must be selected');
 define('DATA_NOT_EXIST', "[Data does not exist]");
+define('DATA_EXISTED', " has existed");

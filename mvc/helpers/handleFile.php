@@ -4,7 +4,7 @@ function uploadFile()
 
     if ($_FILES['avatar']['name'] != '') {
         if( !empty($_POST['old_avatar']) && file_exists("../basephp/public/img/".$_POST['old_avatar']) ) {
-            unlink("../basephp/public/img/" . $_POST['old_avatar']);
+            removeFile($_POST['old_avatar']);
         }
         $filename = $_FILES["avatar"]["name"];
 
@@ -17,6 +17,7 @@ function uploadFile()
         if (in_array($file_extension, $allowed_type)) {
 
             $new_name = rand() . "." . $file_extension;
+            saveFile($new_name);
             return $new_name;
 
         } else {

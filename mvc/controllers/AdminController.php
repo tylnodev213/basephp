@@ -33,7 +33,7 @@ class AdminController extends Controller implements ActionInterface
 
         //check data in db
         if ($validation) {
-            //$password = passwordEncryption($password);
+            $password = passwordEncryption($password);
             $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
         }else {
             $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
@@ -42,7 +42,7 @@ class AdminController extends Controller implements ActionInterface
 
         if (empty($data['id'])) {
             setSessionMessage('Login', 'Fail');
-            header("Location: " . DOMAIN . $this->controller . "/login");
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
@@ -88,9 +88,13 @@ class AdminController extends Controller implements ActionInterface
 
         //validation
         $avatar = uploadFile();
-        $email = $model->searchData(['email' => $_POST['email']], 'getTotalRecord')->fetch();
-        $validation = validation($_POST);
 
+        $validation = validation($_POST);
+        $emailExist = $model->findByField(['email' => $_POST['email']])->fetch();
+        if(!empty($emailExist)) {
+            setSessionMessage('Email', DATA_EXISTED);
+            $validation = false;
+        }
         //Data
         if (!$validation) {
             $this->view($this->controller . "/create", [
@@ -104,7 +108,6 @@ class AdminController extends Controller implements ActionInterface
             return 0;
         }
 
-        saveFile($avatar);
         $password = passwordEncryption($_POST['password']);
         $data = [
             'avatar' => $avatar,
@@ -159,8 +162,8 @@ class AdminController extends Controller implements ActionInterface
         $model = $this->model($this->controller . 'Model');
 
         if (!isset($_POST['save'])) {
-            $data = $model->findByField($id, 'id')->fetch();
-            if(!empty($data)){
+            $data = $model->findByField(['id'=>$id])->fetch();
+            if(empty($data)){
                 phpAlert(DATA_NOT_EXIST, $this->controller);
                 return;
             }
@@ -180,6 +183,11 @@ class AdminController extends Controller implements ActionInterface
 
         //Validate
         $validation = validation($_POST);
+        $emailExist = $model->findByField(['email' => $_POST['email'], 'not_id' => $id])->fetch();
+        if(!empty($emailExist)) {
+            setSessionMessage('Email', DATA_EXISTED);
+            $validation = false;
+        }
 
         if (!$validation) {
             $this->view($this->controller . "/edit", [
@@ -194,7 +202,6 @@ class AdminController extends Controller implements ActionInterface
             return 0;
         }
 
-        saveFile($avatar);
         $password = passwordEncryption($_POST['password']);
         $data = [
             'avatar' => $avatar,
@@ -227,7 +234,7 @@ class AdminController extends Controller implements ActionInterface
         $model = $this->model($this->controller . 'Model');
 
         // find del_flag
-        $data = $model->findByField($id, 'id')->fetch();
+        $data = $model->findByField(['id' => $id])->fetch();
         if(empty($data)){
             phpAlert(DATA_NOT_EXIST, $this->controller);
             return;
@@ -271,7 +278,7 @@ class AdminController extends Controller implements ActionInterface
             return 1;
         }
 
-        $data = $this->model('UserTokenModel')->findByField($_SESSION['email'], 'email')->fetch();
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
         if (empty($data['token'])) {
             return 1;
         }

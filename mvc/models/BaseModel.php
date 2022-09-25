@@ -48,19 +48,43 @@ abstract class BaseModel extends DB implements QueryInterface
         return $sql->execute([$id]);
     }
 
-    public function findByField($id, $nameField): bool|PDOStatement
+    public function findByField($conditions = []): bool|PDOStatement
     {
+        $where['del_flag'] = " = " . DELETED_OFF;
+
+        if (!empty($conditions['email'])) {
+            $where['email'] = "= '" . $conditions['email'] ."'" ;
+        }
+
+        if (!empty($conditions['id'])) {
+            $where['id'] = "= '" . $conditions['id'] ."'" ;
+        }
+
+        if (!empty($conditions['not_id'])) {
+            $where['not_id'] = "= '" . $conditions['not_id'] ."'" ;
+        }
+
+        if (!empty($conditions['facebook_id'])) {
+            $where['facebook_id'] = "= '" . $conditions['facebook_id'] ."'" ;
+        }
+
+        foreach ($where as $key => $value) {
+            if($key == 'not_id') {
+                $key = "NOT id";
+            }
+            $sql[] = $key . " " . $value;
+        }
+        $where = implode(' AND ', $sql);
+
         $fieldSellect = $this->fillable;
-        $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime']);
+        $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime', 'del_flag']);
         $fields = implode(', ', $fieldSellect);
 
         $db = DB::getInstance();
 
-        $sql = $db->prepare("SELECT {$fields} FROM {$this->tableName} WHERE {$nameField} = :id  AND del_flag=".DELETED_OFF);
-        $sql->setFetchMode(PDO::FETCH_ASSOC);
-        $sql->execute(array('id' => $id));
+        return  $db->query("SELECT {$fields} FROM {$this->tableName} WHERE {$where}");
 
-        return $sql;
+
     }
 
     public function searchData($conditions = [], $getResult): bool|PDOStatement
@@ -87,6 +111,7 @@ abstract class BaseModel extends DB implements QueryInterface
             $sql[] = $key . " " . $value;
         }
         $where = implode(' AND ', $sql);
+
         $fieldSellect = $this->fillable;
         $fieldSellect = array_diff($fieldSellect, ['ins_id', 'ins_datetime', 'upd_id', 'upd_datetime', 'del_flag']);
         $fields = implode(', ', $fieldSellect);

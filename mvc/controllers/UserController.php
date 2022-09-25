@@ -42,7 +42,8 @@ class UserController extends Controller implements ActionInterface
         }
 
         if (!empty($data['id'])) {
-            setSessionUser('id', $data['id']);
+            setSessionUser('id', $data['facebook_id']);
+            setSessionUser('status', $data['status']);
             header("Location: " . DOMAIN . $this->controller . "/profile");
             return;
         } else {
@@ -86,7 +87,7 @@ class UserController extends Controller implements ActionInterface
         $model = $this->model($this->controller . 'Model');
 
         if (!isset($_POST['save'])) {
-            $data = $model->findByField($id, 'id')->fetch();
+            $data = $model->findByField(['id'=>$id])->fetch();
             if(empty($data)){
                 phpAlert(DATA_NOT_EXIST, $this->controller);
                 return;
@@ -106,7 +107,13 @@ class UserController extends Controller implements ActionInterface
         $avatar = uploadFile();
         //Validate
         $validation = validation($_POST);
-        saveFile($avatar);
+
+        $emailExist = $model->findByField(['email' => $_POST['email'], 'not_id' => $id])->fetch();
+        if(!empty($emailExist)) {
+            setSessionMessage('Email', DATA_EXISTED);
+            $validation = false;
+        }
+
         if (!$validation) {
             $this->view($this->controller . "/edit", [
                 'id' => $id,
@@ -119,7 +126,6 @@ class UserController extends Controller implements ActionInterface
             ]);
             return 0;
         }
-
 
         $password = passwordEncryption($_POST['password']);
         $data = [
@@ -152,7 +158,7 @@ class UserController extends Controller implements ActionInterface
         $model = $this->model($this->controller . 'Model');
 
         // find del_flag
-        $data = $model->findByField($id, 'id')->fetch();
+        $data = $model->findByField(['id'=>$id])->fetch();
         if(empty($data)){
             phpAlert(DATA_NOT_EXIST, $this->controller);
             return;
@@ -196,7 +202,7 @@ class UserController extends Controller implements ActionInterface
         $facebookId = $facebookData['facebook_id'];
 
         $model = $this->model($this->controller . "Model");
-        $account_exist = $model->findByField($facebookId, 'facebook_id')->fetch();
+        $account_exist = $model->findByField(['facebook_id'=>$facebookId])->fetch();
 
         if (!empty($account_exist)) {
             setSessionUser('id', $facebookId);
@@ -250,7 +256,7 @@ class UserController extends Controller implements ActionInterface
 
         $model = $this->model($this->controller . "Model");
 
-        $data = $model->findByField(getSessionUser('id'), 'facebook_id');
+        $data = $model->findByField(['facebook_id'=>getSessionUser('id')]);
 
         $this->view($this->controller . "/profile", [
             'data' => $data
@@ -284,7 +290,7 @@ class UserController extends Controller implements ActionInterface
             return 0;
         }
 
-        $data = $this->model('UserTokenModel')->findByField($_SESSION['email'], 'email')->fetch();
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
         if (empty($data['token'])) {
             return 0;
         }

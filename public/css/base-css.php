@@ -291,4 +291,7 @@
         text-decoration: none;
         color: black;
     }
+    input.pw {
+        -webkit-text-security: disc;
+    }
 </style>
