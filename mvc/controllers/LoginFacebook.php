@@ -1,5 +1,7 @@
 <?php
 
+use Facebook\Exceptions\FacebookSDKException;
+
 class LoginFacebook extends Decorator
 {
     public function __construct($action)
@@ -8,7 +10,7 @@ class LoginFacebook extends Decorator
     }
 
     /**
-     * @throws \Facebook\Exceptions\FacebookSDKException
+     * @throws FacebookSDKException
      */
     public function callback()
     {
@@ -26,15 +28,12 @@ class LoginFacebook extends Decorator
             $facebook_helper->getPersistentDataHandler()->set('state', $_GET['state']);
         }
 
-        if(isset($_SESSION['facebook_access_token']))
-        {
+        if (isset($_SESSION['facebook_access_token'])) {
             $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
-        }
-        else
-        {
+        } else {
             $access_token = $facebook_helper->getAccessToken();
 
-            $_SESSION['facebook_access_token'] = (string)$access_token;
+            $_SESSION['facebook_access_token'] = (string) $access_token;
 
             $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
         }
@@ -45,10 +44,10 @@ class LoginFacebook extends Decorator
 
 
         return array(
-            'name'=>$facebook_user_info['name'],
-            'email'=>$facebook_user_info['email'],
-            'avatar'=>strchr($facebook_user_info['picture']['url'],"?"),
-            'facebook_id'=>$facebook_user_info['id']
+            'name' => $facebook_user_info['name'],
+            'email' => $facebook_user_info['email'],
+            'avatar' => strchr($facebook_user_info['picture']['url'], "?"),
+            'facebook_id' => $facebook_user_info['id']
         );
     }
 

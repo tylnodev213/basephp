@@ -9,15 +9,27 @@ abstract class Decorator implements ActionInterface
         $this->action = $action;
     }
 
-    public function login() {}
+    public function login()
+    {
+    }
 
-    public function search() {}
+    public function search()
+    {
+    }
 
-    public function create() {}
+    public function create()
+    {
+    }
 
-    public function edit($id) {}
+    public function edit($id)
+    {
+    }
 
-    public function delete($id) {}
+    public function delete($id)
+    {
+    }
 
-    public function logout() {}
+    public function logout()
+    {
+    }
 }

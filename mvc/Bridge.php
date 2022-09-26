@@ -1,4 +1,5 @@
 <?php
+//
 require_once "./mvc/helpers/common.php";
 require_once "./mvc/helpers/const_config.php";
 require_once "./mvc/helpers/const_message.php";

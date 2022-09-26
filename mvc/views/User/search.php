@@ -5,17 +5,20 @@ include_once("mvc/views/layouts/navbar.php");
 include_once("mvc/views/layouts/sort.php");
 ?>
     <div class="notice">
-        <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : ""; unsetSessionActionSuccessful(); ?>
+        <?php echo $message = checkSessionActionSuccessful() ? getSessionActionSuccessful() : "";
+        unsetSessionActionSuccessful(); ?>
     </div>
     <div class="search_box">
         <form action="" method="GET" id="myForm">
             <div class="row">
                 <p class="search_box__form">Email</p>
-                <input type="text" class="search_box__form search_box__form--input" name="email" value="<?php echo $_GET['email'] ?? ""; ?>">
+                <input type="text" class="search_box__form search_box__form--input" name="email"
+                       value="<?php echo $_GET['email'] ?? ""; ?>">
             </div>
             <div class="row">
                 <p class="search_box__form">Name</p>
-                <input type="text" class="search_box__form search_box__form--input" name="name" value="<?php echo $_GET['name'] ?? ""; ?>">
+                <input type="text" class="search_box__form search_box__form--input" name="name"
+                       value="<?php echo $_GET['name'] ?? ""; ?>">
             </div>
             <div class="row search_box__btn">
                 <input type="submit" name="submit" value="Reset" class="reset-btn search_box__btn__items">
@@ -37,8 +40,8 @@ include_once("mvc/views/layouts/sort.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <a href="<?php  sortByField('id', 'ASC'); ?>"><i class="arrow up"></i></a>
-                        <a href="<?php  sortByField('id', 'DESC'); ?>"><i class="arrow down"></i></a>
+                        <a href="<?php sortByField('id', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php sortByField('id', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -49,8 +52,8 @@ include_once("mvc/views/layouts/sort.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <a href="<?php  sortByField('name', 'ASC'); ?>"><i class="arrow up"></i></a>
-                        <a href="<?php  sortByField('name', 'DESC'); ?>"><i class="arrow down"></i></a>
+                        <a href="<?php sortByField('name', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php sortByField('name', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -60,8 +63,8 @@ include_once("mvc/views/layouts/sort.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <a href="<?php  sortByField('email', 'ASC'); ?>"><i class="arrow up"></i></a>
-                        <a href="<?php  sortByField('email', 'DESC'); ?>"><i class="arrow down"></i></a>
+                        <a href="<?php sortByField('email', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php sortByField('email', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -71,8 +74,8 @@ include_once("mvc/views/layouts/sort.php");
                     <?php
                     if ($data["data"]->rowCount() > 0) {
                         ?>
-                        <a href="<?php  sortByField('status', 'ASC'); ?>"><i class="arrow up"></i></a>
-                        <a href="<?php  sortByField('status', 'DESC'); ?>"><i class="arrow down"></i></a>
+                        <a href="<?php sortByField('status', 'ASC'); ?>"><i class="arrow up"></i></a>
+                        <a href="<?php sortByField('status', 'DESC'); ?>"><i class="arrow down"></i></a>
                     <?php } ?>
                 </span>
                 </th>
@@ -84,7 +87,9 @@ include_once("mvc/views/layouts/sort.php");
                 <?php foreach ($data["data"] as $each) : ?>
                     <tr>
                         <td class="column text-center"><?php echo $each['id']; ?></td>
-                        <td class="column text-center"><img src="<?php echo file_exists("../basephp/public/img/".$each['avatar']) ? "../../../basephp/public/img/" . $each['avatar'] : DOMAIN_FB_IMG.$each['avatar'] ?>" class="avatar_img" alt="avatar admin"></td>
+                        <td class="column text-center"><img
+                                    src="<?php echo file_exists("../basephp/public/img/".$each['avatar']) ? "../../../basephp/public/img/".$each['avatar'] : DOMAIN_FB_IMG.$each['avatar'] ?>"
+                                    class="avatar_img" alt="avatar admin"></td>
                         <td class="column"><?php echo $each['name']; ?></td>
                         <td class="column"><?php echo $each['email']; ?></td>
                         <td class="column"><?php if ($each['status'] == '1') {
@@ -92,7 +97,9 @@ include_once("mvc/views/layouts/sort.php");
                             } else {
                                 echo "Banned";
                             } ?></td>
-                        <td class="column text-center"><a href="edit/<?php echo  $each['id']; ?>" class="btn btn-edit">Edit</a><a href="delete/<?php echo  $each['id']; ?>" onclick="return confirm('Are you sure?')" class="btn btn-del" id="delete">Delete</a></td>
+                        <td class="column text-center"><a href="edit/<?php echo $each['id']; ?>" class="btn btn-edit">Edit</a><a
+                                    href="delete/<?php echo $each['id']; ?>" onclick="return confirm('Are you sure?')"
+                                    class="btn btn-del" id="delete">Delete</a></td>
                     </tr>
                 <?php endforeach; ?>
             <?php } else { ?>
