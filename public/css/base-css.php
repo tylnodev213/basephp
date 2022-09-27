@@ -138,6 +138,7 @@
     }
 
     .search_box__form--input {
+        padding: 2px 10px;
         width: 50%;
     }
 
@@ -293,5 +294,11 @@
     }
     input.pw {
         -webkit-text-security: disc;
+    }
+    th a span {
+        color: black;
+    }
+    th a {
+        text-decoration: none !important;
     }
 </style>

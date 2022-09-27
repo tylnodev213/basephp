@@ -25,7 +25,7 @@ class UserController extends Controller implements ActionInterface
         $password = $_POST['password'] ?? "";
 
         if (!isset($_POST['submit'])) {
-            $this->view($this->controller."/login", ["email_input" => $email, "password_input" => $password]);
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
@@ -38,18 +38,19 @@ class UserController extends Controller implements ActionInterface
         //check data in db
         if ($validation) {
             $password = passwordEncryption($password);
-            $data = $this->model($this->controller."Model")->checkLogin($email, $password)->fetch();
+            $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
         }
 
         if (!empty($data['id'])) {
             setSessionUser('id', $data['facebook_id']);
             setSessionUser('status', $data['status']);
-            header("Location: ".DOMAIN.$this->controller."/profile");
+            header("Location: " . DOMAIN . $this->controller . "/profile");
             return;
         } else {
             setSessionMessage('Login', 'Fail');
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
         }
-        $this->view($this->controller."/login", ["email_input" => $email, "password_input" => $password]);
+
 
     }
 
@@ -57,7 +58,7 @@ class UserController extends Controller implements ActionInterface
     {
         //check login SESSION
         if (!checkPermission() && $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
         //GET condition
@@ -69,49 +70,30 @@ class UserController extends Controller implements ActionInterface
         ];
 
         //Model
-        $model = $this->model($this->controller."Model");
+        $model = $this->model($this->controller . "Model");
         $data = $model->searchData($condition, "");
         $total_record = $model->searchData($condition, "getTotalRecord")->fetch();
 
         //View
-        $this->view($this->controller."/search", ["data" => $data, "total_record" => $total_record]);
-    }
-
-    public function checkToken()
-    {
-        if (!isset($_SESSION['email'])) {
-            return 0;
-        }
-
-        $data = $this->model('UserTokenModel')->findByField(['email' => $_SESSION['email']])->fetch();
-        if (empty($data['token'])) {
-            return 0;
-        }
-
-        $token = $data['token'];
-        if ($_SESSION['token'] != $token) {
-            return 0;
-        }
-
-        return 1;
+        $this->view($this->controller . "/search", ["data" => $data, "total_record" => $total_record]);
     }
 
     public function edit($id)
     {
         //check login SESSION
         if (!checkPermission() && $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model($this->controller . 'Model');
 
         if (!isset($_POST['save'])) {
-            $data = $model->findByField(['id' => $id])->fetch();
-            if (empty($data)) {
+            $data = $model->findByField(['id'=>$id])->fetch();
+            if(empty($data)){
                 phpAlert(DATA_NOT_EXIST, $this->controller);
                 return;
             }
-            $this->view($this->controller."/edit", [
+            $this->view($this->controller . "/edit", [
                 'id' => $data['id'],
                 'name' => $data['name'],
                 'avatar' => $data['avatar'],
@@ -125,16 +107,24 @@ class UserController extends Controller implements ActionInterface
         //Data
         $avatar = uploadFile();
         //Validate
-        $validation = validation($_POST);
-
+        $validation = 1;
         $emailExist = $model->findByField(['email' => $_POST['email'], 'not_id' => $id])->fetch();
-        if (!empty($emailExist)) {
+        if(!empty($emailExist)) {
             setSessionMessage('Email', DATA_EXISTED);
-            $validation = false;
+            $validation = 0;
+        }
+        if(empty($_POST['password']) && empty($_POST['password_verify'])) {
+            $validation *= validation([
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'status' => $_POST['status']
+            ]);
+        }else {
+            $validation *= validation($_POST);
         }
 
         if (!$validation) {
-            $this->view($this->controller."/edit", [
+            $this->view($this->controller . "/edit", [
                 'id' => $id,
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -164,21 +154,21 @@ class UserController extends Controller implements ActionInterface
         }
 
         //View
-        header("Location: ".DOMAIN.$this->controller."/search");
+        header("Location: " . DOMAIN . $this->controller . "/search");
     }
 
     public function delete($id)
     {
         //check login SESSION
         if (!checkPermission() && $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model($this->controller . 'Model');
 
         // find del_flag
-        $data = $model->findByField(['id' => $id])->fetch();
-        if (empty($data)) {
+        $data = $model->findByField(['id'=>$id])->fetch();
+        if(empty($data)){
             phpAlert(DATA_NOT_EXIST, $this->controller);
             return;
         }
@@ -196,7 +186,7 @@ class UserController extends Controller implements ActionInterface
         }
 
         //Redirect
-        header("Location: ".DOMAIN.$this->controller."/search");
+        header("Location: " . DOMAIN . $this->controller . "/search");
     }
 
     public function logout()
@@ -205,7 +195,7 @@ class UserController extends Controller implements ActionInterface
             $this->model('UserTokenModel')->deleteById($_SESSION['email']);
         }
 
-        $this->view($this->controller."/login", [
+        $this->view($this->controller . "/login", [
         ]);
 
         session_destroy();
@@ -220,12 +210,12 @@ class UserController extends Controller implements ActionInterface
         $facebookEmail = $facebookData['email'];
         $facebookId = $facebookData['facebook_id'];
 
-        $model = $this->model($this->controller."Model");
-        $account_exist = $model->findByField(['facebook_id' => $facebookId])->fetch();
+        $model = $this->model($this->controller . "Model");
+        $account_exist = $model->findByField(['facebook_id'=>$facebookId])->fetch();
 
         if (!empty($account_exist)) {
             setSessionUser('id', $facebookId);
-            setSessionUser('status', '1');
+            setSessionUser('status','1');
             header('Location: '.DOMAIN.'User/profile');
             return;
         }
@@ -237,7 +227,7 @@ class UserController extends Controller implements ActionInterface
             $this->view($this->controller.'/login');
         }
 
-        $data = $model->checkLogin($facebookEmail, null)->fetch();
+        $data = $model->checkLogin($facebookEmail, NULL)->fetch();
         if (empty($data['id'])) {
             setSessionMessage('Login', 'Fail');
             $this->view($this->controller.'/login');
@@ -258,17 +248,33 @@ class UserController extends Controller implements ActionInterface
             $action = $model->create(array('email' => $facebookEmail, 'token' => $token));
         }
 
-        if ($action) {
+        if($action) {
             setSessionUser('id', $data['facebook_id']);
-            setSessionUser('status', $data['status']);
+            setSessionUser('status',$data['status']);
             $this->profile();
         }
 
     }
 
+    public function profile()
+    {
+        //check login SESSION
+        if (!checkPermission()) {
+            header("Location: " . DOMAIN);
+        }
+
+        $model = $this->model($this->controller . "Model");
+
+        $data = $model->findByField(['facebook_id'=>getSessionUser('id')]);
+
+        $this->view($this->controller . "/profile", [
+            'data' => $data
+        ]);
+    }
+
     public function create()
     {
-        $model = $this->model($this->controller."Model");
+        $model = $this->model($this->controller . "Model");
         //validation
         $validation = validation($_POST);
 
@@ -287,20 +293,23 @@ class UserController extends Controller implements ActionInterface
         return $model->create($data);
     }
 
-    public function profile()
+    public function checkToken()
     {
-        //check login SESSION
-        if (!checkPermission()) {
-            header("Location: ".DOMAIN);
+        if (!isset($_SESSION['email'])) {
+            return 0;
         }
 
-        $model = $this->model($this->controller."Model");
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
+        if (empty($data['token'])) {
+            return 0;
+        }
 
-        $data = $model->findByField(['facebook_id' => getSessionUser('id')]);
+        $token = $data['token'];
+        if ($_SESSION['token'] != $token) {
+            return 0;
+        }
 
-        $this->view($this->controller."/profile", [
-            'data' => $data
-        ]);
+        return 1;
     }
 
 }

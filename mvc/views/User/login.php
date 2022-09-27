@@ -11,8 +11,7 @@ include_once("mvc/views/layouts/header.php");
             <input type="text" id="email" name="email" value="<?php echo $data['email_input'] ?? ""; ?>">
             <div>
                 <p id="validate--username" class="validate"
-                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Email') ? getSessionMessage('Email') : "";
-                    unsetSessionMessage("Email"); ?></p>
+                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Email') ? getSessionMessage('Email') : ""; unsetSessionMessage("Email"); ?></p>
             </div>
             <div>
                 <label for="password">Password</label>
@@ -20,9 +19,7 @@ include_once("mvc/views/layouts/header.php");
             <input type="password" id="password" name="password" value="<?php echo $data['password_input'] ?? ""; ?>">
             <div>
                 <p id="validate--username" class="validate"
-                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Password') ? getSessionMessage('Password') : (checkSessionMessage('Login') ? getSessionMessage('Login') : "");
-                    unsetSessionMessage("Password");
-                    unsetSessionMessage("Login"); ?></p>
+                   style="color:red; font-size:12px"><?php echo checkSessionMessage('Password') ? getSessionMessage('Password') : (checkSessionMessage('Login') ? getSessionMessage('Login') : ""); unsetSessionMessage("Password");unsetSessionMessage("Login"); ?></p>
             </div>
             <div>
                 <?php
@@ -38,8 +35,7 @@ include_once("mvc/views/layouts/header.php");
 
                 $facebook_login_url = $facebook_helper->getLoginUrl(DOMAIN."User/fb_callback", $facebook_permissions);
                 ?>
-                <a href="<?php echo $facebook_login_url ?>" onclick="return confirm('Confirm login with Facebook')">Login
-                    via Facebook</a>
+                <a href="<?php echo $facebook_login_url ?>" onclick="return confirm('Confirm login with Facebook')" >Login via Facebook</a>
             </div>
             <div class="row">
                 <input type="submit" name="submit" value="Log In">

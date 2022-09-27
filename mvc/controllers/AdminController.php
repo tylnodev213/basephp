@@ -22,7 +22,7 @@ class AdminController extends Controller implements ActionInterface
         $password = $_POST['password'] ?? "";
 
         if (!isset($_POST['submit'])) {
-            $this->view($this->controller."/login", ["email_input" => $email, "password_input" => $password]);
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
         //validation
@@ -34,15 +34,15 @@ class AdminController extends Controller implements ActionInterface
         //check data in db
         if ($validation) {
             $password = passwordEncryption($password);
-            $data = $this->model($this->controller."Model")->checkLogin($email, $password)->fetch();
-        } else {
-            $this->view($this->controller."/login", ["email_input" => $email, "password_input" => $password]);
+            $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
+        }else {
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
         if (empty($data['id'])) {
             setSessionMessage('Login', 'Fail');
-            $this->view($this->controller."/login", ["email_input" => $email, "password_input" => $password]);
+            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
@@ -66,7 +66,7 @@ class AdminController extends Controller implements ActionInterface
             setSessionAdmin('role_type', $data['role_type']);
 
             //Redirect
-            header("Location: ".DOMAIN.$this->controller."/search");
+            header("Location: " . DOMAIN . $this->controller . "/search");
             return;
         }
 
@@ -76,28 +76,29 @@ class AdminController extends Controller implements ActionInterface
     {
         //check login SESSION
         if (!checkPermission() && $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
-        $model = $this->model($this->controller."Model");
+        $model = $this->model($this->controller . "Model");
 
         if (!isset($_POST['save'])) {
-            $this->view($this->controller."/create");
+            $this->view($this->controller . "/create");
             return;
         }
 
         //validation
+        $validation = 1;
         $avatar = uploadFile();
-
-        $validation = validation($_POST);
         $emailExist = $model->findByField(['email' => $_POST['email']])->fetch();
-        if (!empty($emailExist)) {
+        if(!empty($emailExist)) {
             setSessionMessage('Email', DATA_EXISTED);
-            $validation = false;
+            $validation = 0;
         }
+        $validation *= validation($_POST);
+
         //Data
         if (!$validation) {
-            $this->view($this->controller."/create", [
+            $this->view($this->controller . "/create", [
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
                 'email' => $_POST['email'],
@@ -125,33 +126,14 @@ class AdminController extends Controller implements ActionInterface
         }
 
         //Redirect
-        header("Location: ".DOMAIN.$this->controller."/search");
-    }
-
-    public function checkToken()
-    {
-        if (!isset($_SESSION['email'])) {
-            return 1;
-        }
-
-        $data = $this->model('UserTokenModel')->findByField(['email' => $_SESSION['email']])->fetch();
-        if (empty($data['token'])) {
-            return 1;
-        }
-
-        $token = $data['token'];
-        if ($_SESSION['token'] != $token) {
-            return 1;
-        }
-
-        return 0;
+        header("Location: " . DOMAIN . $this->controller . "/search");
     }
 
     public function search()
     {
         //check login SESSION && token
         if (!checkPermission() || $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
         //GET condition
@@ -163,53 +145,60 @@ class AdminController extends Controller implements ActionInterface
         ];
 
         //Model
-        $model = $this->model($this->controller."Model");
+        $model = $this->model($this->controller . "Model");
         $data = $model->searchData($condition, "");
         $total_record = $model->searchData($condition, "getTotalRecord")->fetch();
 
         //View
-        $this->view($this->controller."/search", ["data" => $data, "total_record" => $total_record]);
+        $this->view($this->controller . "/search", ["data" => $data, "total_record" => $total_record]);
     }
 
     public function edit($id)
     {
         //check login SESSION
         if (!checkPermission() || $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model($this->controller . 'Model');
 
         if (!isset($_POST['save'])) {
-            $data = $model->findByField(['id' => $id])->fetch();
-            if (empty($data)) {
+            $data = $model->findByField(['id'=>$id])->fetch();
+            if(empty($data)){
                 phpAlert(DATA_NOT_EXIST, $this->controller);
                 return;
             }
-            $this->view($this->controller."/edit", [
+            $this->view($this->controller . "/edit", [
                 'id' => $data['id'],
                 'name' => $data['name'],
                 'avatar' => $data['avatar'],
                 'email' => $data['email'],
-                'password' => $data['password'],
                 'role_type' => $data['role_type']
             ]);
             return;
         }
-
         //Data
         $avatar = uploadFile();
 
         //Validate
-        $validation = validation($_POST);
+        $validation = 1;
         $emailExist = $model->findByField(['email' => $_POST['email'], 'not_id' => $id])->fetch();
-        if (!empty($emailExist)) {
+        if(!empty($emailExist)) {
             setSessionMessage('Email', DATA_EXISTED);
-            $validation = false;
+            $validation = 0;
+        }
+        if(empty($_POST['password']) && empty($_POST['password_verify'])) {
+            $validation *= validation([
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'role_type' => $_POST['role_type']
+            ]);
+        }else {
+            $validation *= validation($_POST);
         }
 
         if (!$validation) {
-            $this->view($this->controller."/edit", [
+            $this->view($this->controller . "/edit", [
                 'id' => $id,
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
@@ -239,7 +228,7 @@ class AdminController extends Controller implements ActionInterface
         }
 
         //Redirect
-        header("Location: ".DOMAIN.$this->controller."/search");
+        header("Location: " . DOMAIN . $this->controller . "/search");
     }
 
     public function delete($id)
@@ -247,14 +236,14 @@ class AdminController extends Controller implements ActionInterface
 
         //check login SESSION
         if (!checkPermission() || $this->checkToken()) {
-            header("Location: ".DOMAIN);
+            header("Location: " . DOMAIN);
         }
 
-        $model = $this->model($this->controller.'Model');
+        $model = $this->model($this->controller . 'Model');
 
         // find del_flag
         $data = $model->findByField(['id' => $id])->fetch();
-        if (empty($data)) {
+        if(empty($data)){
             phpAlert(DATA_NOT_EXIST, $this->controller);
             return;
         }
@@ -270,12 +259,12 @@ class AdminController extends Controller implements ActionInterface
         if ($actioonSuccessfull) {
             setSessionActionSuccessful('Delete');
         }
-        if ($id == getSessionAdmin('id')) {
+        if($id==getSessionAdmin('id')) {
             unset($_SESSION['admin']['id']);
             $this->model('UserTokenModel')->deleteById($_SESSION['email']);
         }
         //Redirect
-        header("Location: ".DOMAIN.$this->controller."/search");
+        header("Location: " . DOMAIN . $this->controller . "/search");
     }
 
     public function logout()
@@ -284,11 +273,30 @@ class AdminController extends Controller implements ActionInterface
             $this->model('UserTokenModel')->deleteById($_SESSION['email']);
         }
 
-        $this->view($this->controller."/login", [
+        $this->view($this->controller . "/login", [
         ]);
 
         session_destroy();
 
+    }
+
+    public function checkToken()
+    {
+        if (!isset($_SESSION['email'])) {
+            return 1;
+        }
+
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
+        if (empty($data['token'])) {
+            return 1;
+        }
+
+        $token = $data['token'];
+        if ($_SESSION['token'] != $token) {
+            return 1;
+        }
+
+        return 0;
     }
 
 }
