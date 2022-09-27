@@ -39,7 +39,7 @@ class AdminController extends Controller implements ActionInterface
 
         $password = passwordEncryption($password);
         $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
-        
+
         if (empty($data['id'])) {
             setSessionMessage('Login', 'Fail');
             $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
@@ -63,7 +63,7 @@ class AdminController extends Controller implements ActionInterface
     public function create()
     {
         //check login SESSION
-        if (!checkPermission() && $this->checkToken()) {
+        if (!checkPermission() || $this->checkToken()) {
             header("Location: " . DOMAIN);
         }
 
