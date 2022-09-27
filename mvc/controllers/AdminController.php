@@ -32,33 +32,21 @@ class AdminController extends Controller implements ActionInterface
         ]);
 
         //check data in db
-        if ($validation) {
-            $password = passwordEncryption($password);
-            $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
-        }else {
+        if (!$validation) {
             $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
+        $password = passwordEncryption($password);
+        $data = $this->model($this->controller . "Model")->checkLogin($email, $password)->fetch();
+        
         if (empty($data['id'])) {
             setSessionMessage('Login', 'Fail');
             $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
             return;
         }
 
-        $model = $this->model('UserTokenModel');
-        $token = getToken(10);
-
-        $_SESSION['email'] = $email;
-        $_SESSION['token'] = $token;
-
-        $row_token = $model->count($email)->fetch();
-
-        if (!empty($row_token['allcount'])) {
-            $action = $model->update($email, $token);
-        } else {
-            $action = $model->create(array('email' => $email, 'token' => $token));
-        }
+        $action = $this->setToken($email);
 
         if ($action) {
 
@@ -297,6 +285,22 @@ class AdminController extends Controller implements ActionInterface
         }
 
         return 0;
+    }
+
+    public function setToken($email) {
+        $model = $this->model('UserTokenModel');
+        $token = getToken(10);
+
+        $_SESSION['email'] = $email;
+        $_SESSION['token'] = $token;
+
+        $row_token = $model->count($email)->fetch();
+
+        if (!empty($row_token['allcount'])) {
+            return $model->update($email, $token);
+        } else {
+            return $model->create(array('email' => $email, 'token' => $token));
+        }
     }
 
 }

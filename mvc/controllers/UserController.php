@@ -44,12 +44,13 @@ class UserController extends Controller implements ActionInterface
         if (!empty($data['id'])) {
             setSessionUser('id', $data['facebook_id']);
             setSessionUser('status', $data['status']);
+            $this->setToken($email);
             header("Location: " . DOMAIN . $this->controller . "/profile");
             return;
-        } else {
-            setSessionMessage('Login', 'Fail');
-            $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
         }
+        setSessionMessage('Login', 'Fail');
+        $this->view($this->controller . "/login", ["email_input" => $email, "password_input" => $password]);
+
 
 
     }
@@ -215,12 +216,14 @@ class UserController extends Controller implements ActionInterface
 
         if (!empty($account_exist)) {
             setSessionUser('id', $facebookId);
-            setSessionUser('status','1');
+            setSessionUser('status',$account_exist['status']);
+            $this->setToken($facebookEmail);
             header('Location: '.DOMAIN.'User/profile');
             return;
         }
 
         $_POST = $facebookData;
+
         $createAccount = $this->create();
         if (!$createAccount) {
             setSessionMessage('Login', 'Fail');
@@ -234,19 +237,7 @@ class UserController extends Controller implements ActionInterface
             return;
         }
 
-        $model = $this->model('UserTokenModel');
-        $token = getToken(10);
-
-        $_SESSION['email'] = $facebookEmail;
-        $_SESSION['token'] = $token;
-
-        $row_token = $model->count($facebookEmail)->fetch();
-
-        if (!empty($row_token['allcount'])) {
-            $action = $model->update($facebookEmail, $token);
-        } else {
-            $action = $model->create(array('email' => $facebookEmail, 'token' => $token));
-        }
+        $action = $this->setToken($facebookEmail);
 
         if($action) {
             setSessionUser('id', $data['facebook_id']);
@@ -310,6 +301,22 @@ class UserController extends Controller implements ActionInterface
         }
 
         return 1;
+    }
+
+    public function setToken($email) {
+        $model = $this->model('UserTokenModel');
+        $token = getToken(10);
+
+        $_SESSION['email'] = $email;
+        $_SESSION['token'] = $token;
+
+        $row_token = $model->count($email)->fetch();
+
+        if (!empty($row_token['allcount'])) {
+            return $model->update($email, $token);
+        } else {
+            return $model->create(array('email' => $email, 'token' => $token));
+        }
     }
 
 }

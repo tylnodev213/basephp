@@ -26,20 +26,20 @@ class LoginFacebook extends Decorator
             $facebook_helper->getPersistentDataHandler()->set('state', $_GET['state']);
         }
 
-        if(isset($_SESSION['facebook_access_token']))
+        if(isset($_SESSION['access_token']))
         {
-            $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
+            $facebook->setDefaultAccessToken($_SESSION['access_token']);
         }
         else
         {
             $access_token = $facebook_helper->getAccessToken();
 
-            $_SESSION['facebook_access_token'] = (string)$access_token;
+            $_SESSION['access_token'] = (string)$access_token;
 
-            $facebook->setDefaultAccessToken($_SESSION['facebook_access_token']);
+            $facebook->setDefaultAccessToken($_SESSION['access_token']);
         }
 
-        $graph_response = $facebook->get("/me?fields=id,name,picture{url}");
+        $graph_response = $facebook->get("/me?fields=id,name,email,picture{url}");
 
         $facebook_user_info = $graph_response->getGraphUser();
 
