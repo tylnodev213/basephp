@@ -287,20 +287,20 @@ class UserController extends Controller implements ActionInterface
     public function checkToken()
     {
         if (!isset($_SESSION['email'])) {
-            return 0;
+            return 1;
         }
 
         $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
         if (empty($data['token'])) {
-            return 0;
+            return 1;
         }
 
         $token = $data['token'];
         if ($_SESSION['token'] != $token) {
-            return 0;
+            return 1;
         }
 
-        return 1;
+        return 0;
     }
 
     public function setToken($email) {

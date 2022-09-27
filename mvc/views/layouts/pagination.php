@@ -1,5 +1,14 @@
 <?php
 $searchData = "";
+
+if(isset($_GET['sortDirection'])) {
+    $searchData .= "&sortDirection=".$_GET['sortDirection'];
+}
+
+if(isset($_GET['sortField'])) {
+    $searchData .= "&sortField=".$_GET['sortField'];
+}
+
 if(isset($_GET['email'])) {
     $searchData .= "&email=".$_GET['email'];
 }
