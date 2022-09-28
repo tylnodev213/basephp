@@ -191,25 +191,33 @@ class AdminController extends Controller implements ActionInterface
                 'avatar' => $avatar,
                 'name' => $_POST['name'],
                 'email' => $_POST['email'],
-                'password' => $_POST['password'],
-                'password_verify' => $_POST['password_verify'],
                 'role_type' => $_POST['role_type']
             ]);
             return 0;
         }
 
-        $password = passwordEncryption($_POST['password']);
-        $data = [
-            'avatar' => $avatar,
-            'name' => $_POST['name'],
-            'email' => $_POST['email'],
-            'password' => $password,
-            'role_type' => $_POST['role_type']
-        ];
-
+        if(!empty($_POST['password'])) {
+            $password = passwordEncryption($_POST['password']);
+            $data = [
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $password,
+                'role_type' => $_POST['role_type']
+            ];
+        }else {
+            $data = [
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'role_type' => $_POST['role_type']
+            ];
+        }
+        if($avatar != $_POST['old_avatar']) {
+            removeFile($_POST['old_avatar']);
+        }
         //Model
         $actioonSuccessfull = $model->update($id, $data);
-
         //notice message action successfull
         if ($actioonSuccessfull) {
             setSessionActionSuccessful('Update');

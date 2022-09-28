@@ -137,14 +137,23 @@ class UserController extends Controller implements ActionInterface
             return 0;
         }
 
-        $password = passwordEncryption($_POST['password']);
-        $data = [
-            'avatar' => $avatar,
-            'name' => $_POST['name'],
-            'email' => $_POST['email'],
-            'password' => $password,
-            'status' => $_POST['status']
-        ];
+        if(!empty($_POST['password'])) {
+            $password = passwordEncryption($_POST['password']);
+            $data = [
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'password' => $password,
+                'status' => $_POST['status']
+            ];
+        }else {
+            $data = [
+                'avatar' => $avatar,
+                'name' => $_POST['name'],
+                'email' => $_POST['email'],
+                'status' => $_POST['status']
+            ];
+        }
 
         //Model
         $actioonSuccessfull = $model->update($id, $data);

@@ -1,11 +1,8 @@
 <?php
 function uploadFile()
 {
-
     if ($_FILES['avatar']['name'] != '') {
-        if( !empty($_POST['old_avatar']) && file_exists("../basephp/public/img/".$_POST['old_avatar']) ) {
-            removeFile($_POST['old_avatar']);
-        }
+
         $filename = $_FILES["avatar"]["name"];
 
 
@@ -14,19 +11,23 @@ function uploadFile()
         $file_extension = strtolower(end($extension));
         $allowed_type = array("jpg", "jpeg", "png", "gif");
 
-        if (in_array($file_extension, $allowed_type)) {
+        if(file_exists("../basephp/public/img/".$filename)) {
+            return $filename;
+        }
 
-            $new_name = rand() . "." . $file_extension;
+        if (in_array($file_extension, $allowed_type)) {
+            $new_name = rand().".".$file_extension;
             saveFile($new_name);
             return $new_name;
 
-        } else {
-            setSessionMessage('Avatar', FILE_NOT_VALID. implode(', ',$allowed_type));
-            return false;
         }
+
+        setSessionMessage('Avatar', FILE_NOT_VALID.implode(', ', $allowed_type));
+        return false;
+
     }
 
-    if(!empty($_POST['old_avatar'])) {
+    if (!empty($_POST['old_avatar'])) {
         return $_POST['old_avatar'];
     }
     setSessionMessage('Avatar', INPUT_BLANK);
@@ -35,12 +36,14 @@ function uploadFile()
 function saveFile($avatar)
 {
     $template = $_FILES["avatar"]["tmp_name"];
-    $folder = "../basephp/public/img/" . $avatar;
+    $folder = "../basephp/public/img/".$avatar;
 
     move_uploaded_file($template, $folder);
 }
 
 function removeFile($avatar)
 {
-    unlink("../basephp/public/img/" . $avatar);
+    if (!empty($avatar) && file_exists("../basephp/public/img/".$avatar)) {
+        unlink("../basephp/public/img/".$avatar);
+    }
 }
