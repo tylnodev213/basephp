@@ -154,7 +154,9 @@ class UserController extends Controller implements ActionInterface
                 'status' => $_POST['status']
             ];
         }
-
+        if($avatar != $_POST['old_avatar']) {
+            removeFile($_POST['old_avatar']);
+        }
         //Model
         $actioonSuccessfull = $model->update($id, $data);
 
