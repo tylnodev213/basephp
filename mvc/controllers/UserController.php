@@ -20,6 +20,9 @@ class UserController extends Controller implements ActionInterface
 
     public function login()
     {
+        if(checkSessionLogin('user')) {
+            header("Location: " . DOMAIN . $this->controller . "/profile");
+        }
 
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
@@ -58,7 +61,7 @@ class UserController extends Controller implements ActionInterface
     public function search()
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken()) {
             header("Location: " . DOMAIN);
         }
 
@@ -82,7 +85,7 @@ class UserController extends Controller implements ActionInterface
     public function edit($id)
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken()) {
             header("Location: " . DOMAIN);
         }
 
@@ -172,7 +175,7 @@ class UserController extends Controller implements ActionInterface
     public function delete($id)
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken()) {
             header("Location: " . DOMAIN);
         }
 

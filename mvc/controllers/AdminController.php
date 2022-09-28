@@ -17,7 +17,9 @@ class AdminController extends Controller implements ActionInterface
 
     public function login()
     {
-
+        if(checkSessionLogin('admin')) {
+            header("Location: " . DOMAIN . $this->controller . "/search");
+        }
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
 
@@ -46,17 +48,17 @@ class AdminController extends Controller implements ActionInterface
             return;
         }
 
-        $action = $this->setToken($email);
+        $this->setToken($email);
 
-        if ($action) {
+        setSessionAdmin('id', $data['id']);
+        setSessionAdmin('role_type', $data['role_type']);
 
-            setSessionAdmin('id', $data['id']);
-            setSessionAdmin('role_type', $data['role_type']);
-
-            //Redirect
+        //Redirect
+        if(getSessionAdmin('role_type')==1) {
             header("Location: " . DOMAIN . $this->controller . "/search");
             return;
         }
+        header("Location: " . DOMAIN."User/search");
 
     }
 
