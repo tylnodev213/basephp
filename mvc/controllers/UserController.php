@@ -231,7 +231,7 @@ class UserController extends Controller implements ActionInterface
         if (!empty($account_exist)) {
             setSessionUser('id', $facebookId);
             setSessionUser('status',$account_exist['status']);
-            $this->setToken($facebookEmail);
+            $this->setToken($facebookEmail,'user');
             header('Location: '.DOMAIN.'User/profile');
             return;
         }
@@ -251,7 +251,7 @@ class UserController extends Controller implements ActionInterface
             return;
         }
 
-        $action = $this->setToken($facebookEmail);
+        $action = $this->setToken($facebookEmail,'user');
 
         if($action) {
             setSessionUser('id', $data['facebook_id']);
