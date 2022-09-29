@@ -47,7 +47,7 @@ class UserController extends Controller implements ActionInterface
         if (!empty($data['id'])) {
             setSessionUser('id', $data['facebook_id']);
             setSessionUser('status', $data['status']);
-            $this->setToken($email);
+            $this->setToken($email,'user');
             header("Location: " . DOMAIN . $this->controller . "/profile");
             return;
         }
@@ -61,7 +61,7 @@ class UserController extends Controller implements ActionInterface
     public function search()
     {
         //check login SESSION
-        if (!checkSessionLogin('admin') || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -85,7 +85,7 @@ class UserController extends Controller implements ActionInterface
     public function edit($id)
     {
         //check login SESSION
-        if (!checkSessionLogin('admin') || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -102,7 +102,6 @@ class UserController extends Controller implements ActionInterface
                 'name' => $data['name'],
                 'avatar' => $data['avatar'],
                 'email' => $data['email'],
-                'password' => $data['password'],
                 'status' => $data['status']
             ]);
             return;
@@ -175,7 +174,7 @@ class UserController extends Controller implements ActionInterface
     public function delete($id)
     {
         //check login SESSION
-        if (!checkSessionLogin('admin') || $this->checkToken()) {
+        if (!checkSessionLogin('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -206,14 +205,15 @@ class UserController extends Controller implements ActionInterface
 
     public function logout()
     {
-        if (isset($_SESSION['email'])) {
-            $this->model('UserTokenModel')->deleteById($_SESSION['email']);
+        if (isset($_SESSION['user']['email'])) {
+            $this->model('UserTokenModel')->deleteById($_SESSION['user']['email']);
         }
 
-        $this->view($this->controller . "/login", [
+        $this->view($this->controller."/login", [
         ]);
 
-        session_destroy();
+        unset($_SESSION['user']['id']);
+
     }
 
     public function fb_callback()
@@ -264,7 +264,7 @@ class UserController extends Controller implements ActionInterface
     public function profile()
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkPermission('user') || $this->checkToken('user')) {
             header("Location: " . DOMAIN);
         }
 
@@ -298,31 +298,31 @@ class UserController extends Controller implements ActionInterface
         return $model->create($data);
     }
 
-    public function checkToken()
+    public function checkToken($controller)
     {
-        if (!isset($_SESSION['email'])) {
+        if (!isset($_SESSION[$controller]['email'])) {
             return 1;
         }
 
-        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION[$controller]['email']])->fetch();
         if (empty($data['token'])) {
             return 1;
         }
 
         $token = $data['token'];
-        if ($_SESSION['token'] != $token) {
+        if ($_SESSION[$controller]['token'] != $token) {
             return 1;
         }
 
         return 0;
     }
 
-    public function setToken($email) {
+    public function setToken($email,$controller) {
         $model = $this->model('UserTokenModel');
         $token = getToken(10);
 
-        $_SESSION['email'] = $email;
-        $_SESSION['token'] = $token;
+        $_SESSION[$controller]['email'] = $email;
+        $_SESSION[$controller]['token'] = $token;
 
         $row_token = $model->count($email)->fetch();
 

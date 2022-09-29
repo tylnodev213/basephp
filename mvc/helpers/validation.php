@@ -59,13 +59,13 @@ function validation($input = []): int
 
     if(isset($input['password']) && !validateLength($input['password'],100,3) )
     {
-        setSessionMessage('Password', INPUT_MIN_LENGTH.' 3 characters and'. INPUT_MAX_LENGTH.' 100 characters ');
+        setSessionMessage('Password', INPUT_MIN_LENGTH.' 3 characters and '. INPUT_MAX_LENGTH.' 100 characters ');
         $check++;
     }
 
     if(isset($input['password_verify']) && !validateLength($input['password_verify'],100,3) )
     {
-        setSessionMessage('Password', INPUT_MIN_LENGTH.' 3 characters and'. INPUT_MAX_LENGTH.' 100 characters ');
+        setSessionMessage('Password_verify', INPUT_MIN_LENGTH.' 3 characters and '. INPUT_MAX_LENGTH.' 100 characters ');
         $check++;
     }
 

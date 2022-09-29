@@ -17,9 +17,14 @@ class AdminController extends Controller implements ActionInterface
 
     public function login()
     {
-        if(checkSessionLogin('admin')) {
+        if(checkSessionLogin('admin') && getSessionAdmin('role_type') == 1) {
             header("Location: " . DOMAIN . $this->controller . "/search");
         }
+
+        if(checkSessionLogin('admin') && getSessionAdmin('role_type') == 2) {
+            header("Location: ". DOMAIN ."User/search");
+        }
+
         $email = $_POST['email'] ?? "";
         $password = $_POST['password'] ?? "";
 
@@ -48,7 +53,7 @@ class AdminController extends Controller implements ActionInterface
             return;
         }
 
-        $this->setToken($email);
+        $this->setToken($email,'admin');
 
         setSessionAdmin('id', $data['id']);
         setSessionAdmin('role_type', $data['role_type']);
@@ -65,7 +70,7 @@ class AdminController extends Controller implements ActionInterface
     public function create()
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkPermission('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -122,7 +127,7 @@ class AdminController extends Controller implements ActionInterface
     public function search()
     {
         //check login SESSION && token
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkPermission('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -146,7 +151,7 @@ class AdminController extends Controller implements ActionInterface
     public function edit($id)
     {
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkPermission('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -233,7 +238,7 @@ class AdminController extends Controller implements ActionInterface
     {
 
         //check login SESSION
-        if (!checkPermission() || $this->checkToken()) {
+        if (!checkPermission('admin') || $this->checkToken('admin')) {
             header("Location: " . DOMAIN);
         }
 
@@ -267,42 +272,42 @@ class AdminController extends Controller implements ActionInterface
 
     public function logout()
     {
-        if (isset($_SESSION['email'])) {
-            $this->model('UserTokenModel')->deleteById($_SESSION['email']);
+        if (isset($_SESSION['admin']['email'])) {
+            $this->model('UserTokenModel')->deleteById($_SESSION['admin']['email']);
         }
 
         $this->view($this->controller . "/login", [
         ]);
 
-        session_destroy();
+        unset($_SESSION['admin']['id']);
 
     }
 
-    public function checkToken()
+    public function checkToken($controller)
     {
-        if (!isset($_SESSION['email'])) {
+        if (!isset($_SESSION[$controller]['email'])) {
             return 1;
         }
 
-        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION['email']])->fetch();
+        $data = $this->model('UserTokenModel')->findByField(['email'=>$_SESSION[$controller]['email']])->fetch();
         if (empty($data['token'])) {
             return 1;
         }
 
         $token = $data['token'];
-        if ($_SESSION['token'] != $token) {
+        if ($_SESSION[$controller]['token'] != $token) {
             return 1;
         }
 
         return 0;
     }
 
-    public function setToken($email) {
+    public function setToken($email,$controller) {
         $model = $this->model('UserTokenModel');
         $token = getToken(10);
 
-        $_SESSION['email'] = $email;
-        $_SESSION['token'] = $token;
+        $_SESSION[$controller]['email'] = $email;
+        $_SESSION[$controller]['token'] = $token;
 
         $row_token = $model->count($email)->fetch();
 

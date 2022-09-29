@@ -2,7 +2,7 @@
 
 define('DELETED_ON', 1);
 define('DELETED_OFF', 0);
-define('DOMAIN', 'https://920f-14-248-83-33.ap.ngrok.io/basephp/');
+define('DOMAIN', 'https://165d-14-248-83-33.jp.ngrok.io/basephp/');
 define('NUMBER_RECORD_EACH_PAGE', '10');
 define('AVATAR_DEFAULT', 'avatar_default.png');
 

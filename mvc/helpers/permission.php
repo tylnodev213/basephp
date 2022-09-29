@@ -1,12 +1,16 @@
 <?php
 
-function checkPermission(): bool
+function checkPermission($controller): bool
 {
-    if (!checkSessionLogin('admin') && !checkSessionLogin('user')) {
+    if (!checkSessionLogin($controller)) {
         return 0;
     }
+    if($controller == 'admin') {
+        $permission = $_SESSION['admin']['role_type'];
+    }else {
+        $permission = $_SESSION['user']['status'];
+    }
 
-    $permission = $_SESSION['admin']['role_type'] ?? $_SESSION['user']['status'];
     if (isset($permission) && $permission != '1') {
         return 0;
     }
