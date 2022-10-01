@@ -1,25 +1,35 @@
 <?php
+
 function uploadFile()
 {
     if ($_FILES['avatar']['name'] != '') {
 
         $filename = $_FILES["avatar"]["name"];
-
-
-        $extension = explode(".", $filename);
-
-        $file_extension = strtolower(end($extension));
-        $allowed_type = array("jpg", "jpeg", "png", "gif");
-
+        // check file existed
         if(file_exists("../basephp/public/img/".$filename)) {
             return $filename;
         }
+        // check file's size
+        $filesize   = 1000000;
+        if ($_FILES["avatar"]["size"] > $filesize)
+        {
+            setSessionMessage('Avatar', FILE_TOO_BIG);
+            return false;
+        }
+        // check extension of file
+        $extension = explode(".", $filename);
+        // get extension of file
+        $file_extension = strtolower(end($extension));
+
+        $allowed_type = array("jpg", "jpeg", "png", "gif");
 
         if (in_array($file_extension, $allowed_type)) {
+            // change file's name
             $new_name = rand().".".$file_extension;
+            // save file
             saveFile($new_name);
-            return $new_name;
 
+            return $new_name;
         }
 
         setSessionMessage('Avatar', FILE_NOT_VALID.implode(', ', $allowed_type));
